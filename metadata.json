@@ -1,0 +1,6 @@
+{
+  "name": "Alfabetização Divertida - Aprender a Ler",
+  "description": "Plataforma lúdica com Trilha da Leitura guiada passo a passo, consciência fonológica, divisão silábica, narração por voz e diploma de alfabetização.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

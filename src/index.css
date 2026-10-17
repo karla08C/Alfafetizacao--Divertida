@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+.font-reader {
+  font-family: 'Lexend', system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  word-spacing: 0.18em;
+  line-height: 1.8;
+}
+
+/* Modo Noturno: tons suaves de azul escuro e roxo para reduzir a fadiga ocular */
+.app-night-mode {
+  background-color: #0A0F1D !important;
+  color: #E2E8F0 !important;
+}
+
+.app-night-mode main {
+  background-color: transparent !important;
+}
+
+/* Transform light cards into soothing night surfaces */
+.app-night-mode .bg-white {
+  background-color: #131B2E !important;
+  border-color: #243254 !important;
+  color: #E2E8F0 !important;
+}
+
+.app-night-mode .bg-slate-50,
+.app-night-mode .bg-slate-100 {
+  background-color: #1A243D !important;
+  border-color: #29385C !important;
+  color: #CBD5E1 !important;
+}
+
+.app-night-mode .bg-amber-50,
+.app-night-mode .bg-amber-50\/70 {
+  background-color: #1A1F36 !important;
+  border-color: #38305E !important;
+  color: #E2E8F0 !important;
+}
+
+.app-night-mode .text-slate-800,
+.app-night-mode .text-slate-700,
+.app-night-mode .text-slate-900 {
+  color: #F1F5F9 !important;
+}
+
+.app-night-mode .text-slate-600,
+.app-night-mode .text-slate-500 {
+  color: #94A3B8 !important;
+}
+
+.app-night-mode .text-amber-900,
+.app-night-mode .text-amber-950 {
+  color: #FDE68A !important;
+}
+
+.app-night-mode .border-slate-200,
+.app-night-mode .border-slate-100,
+.app-night-mode .border-amber-200 {
+  border-color: #243254 !important;
+}
+
+.app-night-mode .border-amber-300,
+.app-night-mode .border-amber-400 {
+  border-color: #7C3AED !important;
+}
+
+.app-night-mode footer {
+  background-color: #0D1424 !important;
+  border-color: #1E2942 !important;
+  color: #64748B !important;
+}
+
