@@ -17,13 +17,16 @@ import {
   Calendar,
   Star,
   Flame,
+  Lock,
 } from 'lucide-react';
-import { GameMode, LetterCase, UserProgress, UserProfile } from '../types';
+import { GameMode, LetterCase, UserProgress, UserProfile, TrailProgress } from '../types';
 import { soundEngine } from '../utils/audio';
+import { TRAIL_MISSIONS } from '../data/trailData';
 
 interface HeaderProps {
   currentMode: GameMode;
   onSelectMode: (mode: GameMode) => void;
+  trailProgress: TrailProgress;
   progress: UserProgress;
   letterCase: LetterCase;
   onToggleCase: () => void;
@@ -34,11 +37,13 @@ interface HeaderProps {
   onToggleDarkMode: () => void;
   activeProfile?: UserProfile;
   onOpenProfiles: () => void;
+  onLockedModeAttempt?: (mode: GameMode, modeLabel: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   currentMode,
   onSelectMode,
+  trailProgress,
   progress,
   letterCase,
   onToggleCase,
@@ -49,6 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDarkMode,
   activeProfile,
   onOpenProfiles,
+  onLockedModeAttempt,
 }) => {
   const modes: { id: GameMode; label: string; icon: React.ReactNode; color: string }[] = [
     {
@@ -287,26 +293,52 @@ export const Header: React.FC<HeaderProps> = ({
         <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-1 scrollbar-none touch-pan-x -mx-2.5 px-2.5 sm:mx-0 sm:px-0">
           {modes.map(mode => {
             const isActive = currentMode === mode.id;
+            const isModeUnlocked = (modeId: GameMode): boolean => {
+              if (modeId === 'trail') return true;
+              if (trailProgress?.unlockedAllForTesting) return true;
+              return TRAIL_MISSIONS.some(
+                m => m.targetMode === modeId && trailProgress?.completedMissionIds?.includes(m.id)
+              );
+            };
+            const unlocked = isModeUnlocked(mode.id);
+
             return (
               <button
                 key={mode.id}
                 type="button"
                 onClick={() => {
+                  if (!unlocked) {
+                    soundEngine.playGentleTryAgain();
+                    onLockedModeAttempt?.(mode.id, mode.label);
+                    return;
+                  }
                   soundEngine.playPop();
                   onSelectMode(mode.id);
                 }}
-                className={`px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer select-none shrink-0 ${
+                className={`px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap transition-all select-none shrink-0 ${
                   isActive
                     ? darkMode
                       ? 'bg-indigo-600 text-white shadow-xs font-black'
                       : 'bg-amber-500 text-white shadow-xs font-black'
+                    : !unlocked
+                    ? darkMode
+                      ? 'bg-[#182234]/40 text-slate-500 border border-slate-800/60 opacity-60 hover:opacity-85 cursor-pointer'
+                      : 'bg-slate-100/90 text-slate-400 border border-slate-200/80 opacity-60 hover:opacity-85 cursor-pointer'
                     : darkMode
-                    ? 'bg-[#182234] hover:bg-slate-800 text-slate-300 border border-slate-700/80'
-                    : 'bg-white hover:bg-amber-50/80 text-slate-700 border border-slate-200'
+                    ? 'bg-[#182234] hover:bg-slate-800 text-slate-300 border border-slate-700/80 cursor-pointer'
+                    : 'bg-white hover:bg-amber-50/80 text-slate-700 border border-slate-200 cursor-pointer'
                 }`}
+                title={
+                  !unlocked
+                    ? `${mode.label} bloqueado. Complete as etapas na Trilha da Leitura para destravar!`
+                    : mode.label
+                }
               >
                 {mode.icon}
                 <span>{mode.label}</span>
+                {!unlocked && (
+                  <Lock className="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0" />
+                )}
               </button>
             );
           })}

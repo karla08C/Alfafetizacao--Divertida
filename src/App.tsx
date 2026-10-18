@@ -72,8 +72,8 @@ const createDefaultProfiles = (
         level: 2,
       },
       trailProgress: legacyTrail || {
-        completedMissionIds: ['m1_vogais', 'm2_ba_be_bi'],
-        currentMissionId: 'm3_palavras_bola',
+        completedMissionIds: ['m1_vowels_sounds', 'm2_vowels_initial'],
+        currentMissionId: 'm3_syllable_b',
         unlockedAllForTesting: false,
       },
       dailyStats: legacyStats || {
@@ -103,8 +103,8 @@ const createDefaultProfiles = (
         level: 1,
       },
       trailProgress: {
-        completedMissionIds: ['m1_vogais'],
-        currentMissionId: 'm2_ba_be_bi',
+        completedMissionIds: ['m1_vowels_sounds'],
+        currentMissionId: 'm2_vowels_initial',
         unlockedAllForTesting: false,
       },
       dailyStats: {
@@ -172,6 +172,7 @@ export default function App() {
   const [completedMissionModal, setCompletedMissionModal] = useState<{
     mission: TrailMission;
     nextMission?: TrailMission;
+    unlockedModeLabel?: string;
   } | null>(null);
 
   // Active child's Trail Progress state
@@ -253,6 +254,78 @@ export default function App() {
     }
   }, [settings]);
 
+  // Mascot update handler
+  const handleUpdateMascot = (
+    mood: 'happy' | 'thinking' | 'celebrating' | 'encouraging',
+    message: string,
+    hint?: string
+  ) => {
+    setMascotMood(mood);
+    setMascotMessage(message);
+    setMascotHint(hint);
+  };
+
+  const GAME_MODE_LABELS: Record<GameMode, string> = {
+    trail: 'Trilha da Leitura',
+    syllables: 'Monte a Palavra',
+    sounds: 'Detetive dos Sons',
+    rhymes: 'Caça-Rimas',
+    lab: 'Fábrica de Sílabas',
+    reading: 'Leitura Guiada',
+    duel: 'Duelo Fonético',
+  };
+
+  const isGameModeUnlocked = (mode: GameMode, trail?: TrailProgress): boolean => {
+    if (mode === 'trail') return true;
+    if (trail?.unlockedAllForTesting) return true;
+    return TRAIL_MISSIONS.some(
+      m => m.targetMode === mode && trail?.completedMissionIds?.includes(m.id)
+    );
+  };
+
+  const handleLockedModeAttempt = (mode: GameMode, modeLabel: string) => {
+    const missionForMode = TRAIL_MISSIONS.find(m => m.targetMode === mode);
+    const missionName = missionForMode ? `"${missionForMode.title}"` : 'na Trilha';
+    const message = `A aba "${modeLabel}" está bloqueada! Complete a missão ${missionName} na Trilha da Leitura para liberar este jogo.`;
+    handleUpdateMascot('encouraging', message, 'Complete as etapas da trilha para destravar novos jogos!');
+    if (settings.voiceEnabled) {
+      soundEngine.speakText(
+        `A aba ${modeLabel} está bloqueada! Complete a missão na Trilha da Leitura para liberar este jogo.`,
+        {
+          emotion: 'encouraging',
+          playMascotChirp: true,
+          rate: settings.speechRate,
+        }
+      );
+    }
+  };
+
+  const handleSelectMode = (mode: GameMode) => {
+    if (!isGameModeUnlocked(mode, trailProgress)) {
+      soundEngine.playGentleTryAgain();
+      handleLockedModeAttempt(mode, GAME_MODE_LABELS[mode]);
+      setCurrentMode('trail');
+      return;
+    }
+    setCurrentMode(mode);
+    setMascotHint(undefined);
+    if (mode === 'trail') {
+      handleUpdateMascot('happy', 'Essa é a Trilha da Leitura! Vamos avançar etapa por etapa até o diploma de leitor.');
+    } else if (mode === 'syllables') {
+      handleUpdateMascot('happy', 'Monte a palavra juntando os pedacinhos na ordem certa!');
+    } else if (mode === 'sounds') {
+      handleUpdateMascot('thinking', 'Detetive dos Sons! Vamos descobrir qual palavra começa com o som.');
+    } else if (mode === 'rhymes') {
+      handleUpdateMascot('thinking', 'Caça-Rimas! As rimas terminam com o mesmo sonzinho musical.');
+    } else if (mode === 'lab') {
+      handleUpdateMascot('happy', 'Fábrica de Sílabas! Escolha uma consoante e uma vogal para ouvir a mágica.');
+    } else if (mode === 'reading') {
+      handleUpdateMascot('happy', 'Leitura Guiada! Vamos ler uma historinha juntos, palavra por palavra.');
+    } else if (mode === 'duel') {
+      handleUpdateMascot('thinking', 'Duelo Fonético! Escolha entre as duas palavras antes do tempo acabar!');
+    }
+  };
+
   // Daily streak check and incrementer
   const bumpDailyStreak = () => {
     const today = getTodayDateKey();
@@ -287,6 +360,9 @@ export default function App() {
     setTrailProgress(target.trailProgress);
     setDailyStats(target.dailyStats);
     setBadges(target.badges);
+    if (!isGameModeUnlocked(currentMode, target.trailProgress)) {
+      setCurrentMode('trail');
+    }
     try {
       localStorage.setItem(STORAGE_KEY_ACTIVE_PROFILE_ID, profileId);
     } catch {
@@ -467,6 +543,7 @@ export default function App() {
       // ignore
     }
 
+    const wasModeUnlockedBefore = isGameModeUnlocked(target.targetMode, trailProgress);
     const currentIndex = TRAIL_MISSIONS.findIndex(m => m.id === target.id);
     const nextMission = TRAIL_MISSIONS[currentIndex + 1];
 
@@ -493,9 +570,21 @@ export default function App() {
       return updated;
     });
 
+    const isModeNewlyUnlocked = !wasModeUnlockedBefore && target.targetMode !== 'trail';
+    const unlockedModeLabel = isModeNewlyUnlocked ? GAME_MODE_LABELS[target.targetMode] : undefined;
+
+    if (unlockedModeLabel) {
+      handleUpdateMascot(
+        'celebrating',
+        `Parabéns! Além de avançar na Trilha, você liberou a aba "${unlockedModeLabel}" no menu superior!`,
+        'Agora você pode jogar essa brincadeira quando quiser!'
+      );
+    }
+
     setCompletedMissionModal({
       mission: target,
       nextMission,
+      unlockedModeLabel,
     });
   };
 
@@ -523,6 +612,7 @@ export default function App() {
       unlockedAllForTesting: false,
     };
     setTrailProgress(initial);
+    setCurrentMode('trail');
     try {
       localStorage.setItem(STORAGE_KEY_TRAIL, JSON.stringify(initial));
     } catch {
@@ -665,17 +755,6 @@ export default function App() {
     }
   };
 
-  // Mascot update handler
-  const handleUpdateMascot = (
-    mood: 'happy' | 'thinking' | 'celebrating' | 'encouraging',
-    message: string,
-    hint?: string
-  ) => {
-    setMascotMood(mood);
-    setMascotMessage(message);
-    setMascotHint(hint);
-  };
-
   const handleToggleCase = () => {
     setSettings(prev => ({
       ...prev,
@@ -705,25 +784,9 @@ export default function App() {
       {/* Top App Header & Game Switcher */}
       <Header
         currentMode={currentMode}
-        onSelectMode={(mode) => {
-          setCurrentMode(mode);
-          setMascotHint(undefined);
-          if (mode === 'trail') {
-            handleUpdateMascot('happy', 'Essa é a Trilha da Leitura! Vamos avançar etapa por etapa até o diploma de leitor.');
-          } else if (mode === 'syllables') {
-            handleUpdateMascot('happy', 'Monte a palavra juntando os pedacinhos na ordem certa!');
-          } else if (mode === 'sounds') {
-            handleUpdateMascot('thinking', 'Detetive dos Sons! Vamos descobrir qual palavra começa com o som.');
-          } else if (mode === 'rhymes') {
-            handleUpdateMascot('thinking', 'Caça-Rimas! As rimas terminam com o mesmo sonzinho musical.');
-          } else if (mode === 'lab') {
-            handleUpdateMascot('happy', 'Fábrica de Sílabas! Escolha uma consoante e uma vogal para ouvir a mágica.');
-          } else if (mode === 'reading') {
-            handleUpdateMascot('happy', 'Leitura Guiada! Vamos ler uma historinha juntos, palavra por palavra.');
-          } else if (mode === 'duel') {
-            handleUpdateMascot('thinking', 'Duelo Fonético! Escolha entre as duas palavras antes do tempo acabar!');
-          }
-        }}
+        onSelectMode={handleSelectMode}
+        trailProgress={trailProgress}
+        onLockedModeAttempt={handleLockedModeAttempt}
         progress={progress}
         letterCase={settings.letterCase}
         onToggleCase={handleToggleCase}
@@ -836,7 +899,7 @@ export default function App() {
                   darkMode={settings.darkMode}
                   totalStars={progress.stars}
                   onOpenRoutine={() => setIsRoutineOpen(true)}
-                  onSelectMode={setCurrentMode}
+                  onSelectMode={handleSelectMode}
                   activeProfileName={activeProfile.name}
                 />
               </motion.div>
@@ -1000,6 +1063,17 @@ export default function App() {
               {completedMissionModal.mission.starsReward} Estrelas douradas!
             </p>
 
+            {completedMissionModal.unlockedModeLabel && (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="w-full p-2.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/15 text-amber-800 dark:text-amber-200 font-extrabold text-xs sm:text-sm border border-amber-400/50 flex items-center justify-center gap-2 shadow-xs"
+              >
+                <Sparkles className="w-4 h-4 text-amber-500 shrink-0 animate-spin" />
+                <span>🎉 Nova aba liberada: <strong>{completedMissionModal.unlockedModeLabel}</strong>!</span>
+              </motion.div>
+            )}
+
             <div className="flex items-center justify-center gap-1.5 py-1">
               {Array.from({ length: completedMissionModal.mission.starsReward }).map((_, i) => (
                 <Star key={i} className="w-6 h-6 fill-amber-400 text-amber-400" />
@@ -1115,7 +1189,7 @@ export default function App() {
       <StudyScheduleModal
         isOpen={isRoutineOpen}
         onClose={() => setIsRoutineOpen(false)}
-        onSelectMode={setCurrentMode}
+        onSelectMode={handleSelectMode}
         dailyStats={dailyStats}
         totalStars={progress.stars}
         darkMode={settings.darkMode}
