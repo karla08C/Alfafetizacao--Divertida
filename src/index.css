@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   body {
     font-family: 'Lexend', system-ui, -apple-system, sans-serif;
@@ -15,7 +17,12 @@
   line-height: 1.8;
 }
 
-/* Modo Noturno: tons suaves de azul escuro e roxo para reduzir a fadiga ocular */
+/* Modo Noturno: tons relaxantes e acessíveis de azul-marinho e ardósia */
+.dark,
+.app-night-mode {
+  color-scheme: dark;
+}
+
 .app-night-mode {
   background-color: #0A0F1D !important;
   color: #E2E8F0 !important;
@@ -40,9 +47,10 @@
 }
 
 .app-night-mode .bg-amber-50,
-.app-night-mode .bg-amber-50\/70 {
-  background-color: #1A1F36 !important;
-  border-color: #38305E !important;
+.app-night-mode .bg-amber-50\/70,
+.app-night-mode .bg-amber-50\/80 {
+  background-color: #161D32 !important;
+  border-color: #2D3E64 !important;
   color: #E2E8F0 !important;
 }
 
@@ -68,14 +76,10 @@
   border-color: #243254 !important;
 }
 
-.app-night-mode .border-amber-300,
-.app-night-mode .border-amber-400 {
-  border-color: #7C3AED !important;
-}
-
 .app-night-mode footer {
   background-color: #0D1424 !important;
   border-color: #1E2942 !important;
   color: #64748B !important;
 }
+
 

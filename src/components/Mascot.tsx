@@ -67,7 +67,7 @@ export const Mascot: React.FC<MascotProps> = ({
   const expr = getMascotExpression();
 
   return (
-    <div id="mascot-container" className="flex items-center gap-3 bg-white/90 backdrop-blur-xs p-3.5 sm:p-4 rounded-3xl border-2 border-amber-200 shadow-sm max-w-2xl mx-auto transition-all">
+    <div id="mascot-container" className="flex items-center gap-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs p-3.5 sm:p-4 rounded-3xl border-2 border-amber-200 dark:border-slate-800 shadow-sm max-w-2xl mx-auto transition-all">
       {/* Interactive Mascot Avatar */}
       <button
         type="button"
@@ -114,13 +114,13 @@ export const Mascot: React.FC<MascotProps> = ({
 
       {/* Speech bubble */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-800 mb-0.5">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-400 mb-0.5">
           <span>Pipoca, seu amigo leitor</span>
           {mood === 'celebrating' && (
             <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-spin" />
           )}
         </div>
-        <p className="text-sm sm:text-base font-medium text-slate-800 leading-snug">
+        <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-slate-100 leading-snug">
           {message}
         </p>
       </div>
@@ -131,7 +131,7 @@ export const Mascot: React.FC<MascotProps> = ({
           id="btn-mascot-speak"
           type="button"
           onClick={speakMascot}
-          className="p-2 sm:p-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 transition-colors cursor-pointer border border-amber-300"
+          className="p-2 sm:p-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/60 hover:bg-amber-200 dark:hover:bg-amber-900/80 text-amber-800 dark:text-amber-300 transition-colors cursor-pointer border border-amber-300 dark:border-amber-700"
           title="Ouvir o Pipoca falar"
         >
           <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -145,10 +145,10 @@ export const Mascot: React.FC<MascotProps> = ({
               soundEngine.playPop();
               onHintClick();
             }}
-            className="p-2 sm:p-2.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 transition-colors cursor-pointer border border-sky-300 flex items-center gap-1 text-xs font-bold"
+            className="p-2 sm:p-2.5 rounded-xl bg-sky-100 dark:bg-sky-950/60 hover:bg-sky-200 dark:hover:bg-sky-900/80 text-sky-800 dark:text-sky-300 transition-colors cursor-pointer border border-sky-300 dark:border-sky-700 flex items-center gap-1 text-xs font-bold"
             title="Dica mágica do Pipoca"
           >
-            <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600" />
+            <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600 dark:text-sky-400" />
             <span className="hidden sm:inline">Dica</span>
           </button>
         )}

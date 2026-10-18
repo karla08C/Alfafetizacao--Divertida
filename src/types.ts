@@ -100,6 +100,20 @@ export interface AppSettings {
   soundEffectsEnabled: boolean;
   voiceEnabled: boolean;
   darkMode: boolean;
+  preferredVoiceURI?: string;
+}
+
+export interface DayRoutinePlan {
+  dayOfWeek: number; // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+  dayName: string;
+  shortName: string;
+  focusArea: string;
+  recommendedMinutes: number;
+  recommendedMode: GameMode;
+  title: string;
+  description: string;
+  pedagogicalTip: string;
+  suggestedActivities: string[];
 }
 
 export type TrailMissionType =

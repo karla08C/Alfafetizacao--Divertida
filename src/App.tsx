@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Map, CheckCircle2, Sparkles, ArrowRight, Play } from 'lucide-react';
+import { Map, CheckCircle2, Sparkles, ArrowRight, Play, Star, Calendar, GraduationCap } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Header } from './components/Header';
 import { Mascot } from './components/Mascot';
@@ -13,6 +13,7 @@ import { ReadAlongBook } from './components/ReadAlongBook';
 import { PhoneticDuelGame } from './components/PhoneticDuelGame';
 import { BadgesModal } from './components/BadgesModal';
 import { SettingsModal } from './components/SettingsModal';
+import { StudyScheduleModal } from './components/StudyScheduleModal';
 import {
   SYLLABLE_WORDS,
   SOUND_QUESTIONS,
@@ -155,6 +156,12 @@ export default function App() {
   // Modals
   const [isBadgesOpen, setIsBadgesOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isRoutineOpen, setIsRoutineOpen] = useState(false);
+
+  // Sync dark class on document.documentElement for global Tailwind dark mode
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', Boolean(settings.darkMode));
+  }, [settings.darkMode]);
 
   // Sync to localStorage
   useEffect(() => {
@@ -528,6 +535,7 @@ export default function App() {
         onToggleCase={handleToggleCase}
         onOpenBadges={() => setIsBadgesOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenRoutine={() => setIsRoutineOpen(true)}
         darkMode={settings.darkMode}
         onToggleDarkMode={handleToggleDarkMode}
       />
@@ -566,7 +574,10 @@ export default function App() {
                   <span className="text-2xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
                     Missão da Trilha • Etapa {activeTrailMission.order}
                   </span>
-                  <span className="text-2xs font-bold text-amber-500">+{activeTrailMission.starsReward}★</span>
+                  <span className="text-2xs font-bold text-amber-500 flex items-center gap-0.5">
+                    <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                    +{activeTrailMission.starsReward}
+                  </span>
                 </div>
                 <h4 className="text-xs sm:text-sm font-black leading-tight">
                   {settings.letterCase === 'uppercase'
@@ -628,6 +639,8 @@ export default function App() {
                   voiceEnabled={settings.voiceEnabled}
                   darkMode={settings.darkMode}
                   totalStars={progress.stars}
+                  onOpenRoutine={() => setIsRoutineOpen(true)}
+                  onSelectMode={setCurrentMode}
                 />
               </motion.div>
             )}
@@ -772,7 +785,7 @@ export default function App() {
             }`}
           >
             <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-400 to-orange-400 flex items-center justify-center text-3xl shadow-lg shadow-amber-400/30 animate-bounce">
-              🎉
+              <Sparkles className="w-8 h-8 text-white" />
             </div>
 
             <div className="flex items-center gap-1.5 text-xs font-black text-amber-500 uppercase tracking-wider">
@@ -790,8 +803,10 @@ export default function App() {
               {completedMissionModal.mission.starsReward} Estrelas douradas!
             </p>
 
-            <div className="flex items-center gap-1 text-2xl text-amber-400 py-1">
-              {'⭐'.repeat(completedMissionModal.mission.starsReward)}
+            <div className="flex items-center justify-center gap-1.5 py-1">
+              {Array.from({ length: completedMissionModal.mission.starsReward }).map((_, i) => (
+                <Star key={i} className="w-6 h-6 fill-amber-400 text-amber-400" />
+              ))}
             </div>
 
             <div className="w-full flex flex-col sm:flex-row items-center gap-2.5 mt-2">
@@ -827,9 +842,10 @@ export default function App() {
                     setCompletedMissionModal(null);
                     setCurrentMode('trail');
                   }}
-                  className="w-full sm:w-1/2 py-2.5 rounded-2xl bg-emerald-500 text-white font-black text-xs cursor-pointer"
+                  className="w-full sm:w-1/2 py-2.5 rounded-2xl bg-emerald-500 text-white font-black text-xs cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  Concluir Trilha! 🎓
+                  <GraduationCap className="w-4 h-4" />
+                  <span>Concluir Trilha!</span>
                 </button>
               )}
             </div>
@@ -838,22 +854,31 @@ export default function App() {
       )}
 
       {/* Pedagogical Footer */}
-      <footer className="w-full py-4 border-t border-amber-100/80 bg-white/50 text-center text-xs text-slate-400">
+      <footer className="w-full py-4 border-t border-amber-100/80 dark:border-slate-800 bg-white/50 dark:bg-slate-900/60 text-center text-xs text-slate-400 dark:text-slate-500">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>Alfabetização Divertida • Consciência Fonológica e Apoio à Leitura</span>
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setIsSettingsOpen(true)}
-              className="text-amber-800 hover:underline cursor-pointer font-medium"
+              onClick={() => setIsRoutineOpen(true)}
+              className="text-amber-800 dark:text-amber-400 hover:underline cursor-pointer font-medium flex items-center gap-1"
             >
-              Acessibilidade & Dislexia
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Rotina de Estudos</span>
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(true)}
+              className="text-amber-800 dark:text-amber-400 hover:underline cursor-pointer font-medium"
+            >
+              Acessibilidade & Voz
             </button>
             <span>•</span>
             <button
               type="button"
               onClick={() => setIsBadgesOpen(true)}
-              className="text-amber-800 hover:underline cursor-pointer font-medium"
+              className="text-amber-800 dark:text-amber-400 hover:underline cursor-pointer font-medium"
             >
               Medalhas & Resumo dos Pais ({badges.filter(b => b.unlocked).length}/{badges.length})
             </button>
@@ -879,6 +904,16 @@ export default function App() {
         onClose={() => setIsSettingsOpen(false)}
         settings={settings}
         onUpdateSettings={handleUpdateSettings}
+      />
+
+      {/* Study Schedule Modal */}
+      <StudyScheduleModal
+        isOpen={isRoutineOpen}
+        onClose={() => setIsRoutineOpen(false)}
+        onSelectMode={setCurrentMode}
+        dailyStats={dailyStats}
+        totalStars={progress.stars}
+        darkMode={settings.darkMode}
       />
     </div>
   );

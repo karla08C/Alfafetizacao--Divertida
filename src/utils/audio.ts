@@ -1,26 +1,49 @@
 /**
  * Audio synthesis and Speech Engine for Literacy App
  * Uses Web Audio API for zero-latency playful sound effects
- * and Web Speech API (pt-BR) for reading syllables and words aloud.
+ * and Web Speech API (pt-BR) with natural Brazilian voices for reading syllables and words aloud.
  */
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
   private ptVoice: SpeechSynthesisVoice | null = null;
+  private availablePtVoices: SpeechSynthesisVoice[] = [];
+  private preferredVoiceURI: string | null = null;
+  private listeners: (() => void)[] = [];
 
   constructor() {
     this.initVoice();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = () => {
         this.initVoice();
+        this.notifyListeners();
       };
     }
+  }
+
+  public onVoicesChanged(listener: () => void) {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener);
+    };
+  }
+
+  private notifyListeners() {
+    this.listeners.forEach(l => {
+      try {
+        l();
+      } catch {
+        // ignore
+      }
+    });
   }
 
   private getAudioContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }
@@ -31,13 +54,110 @@ class SoundEngine {
     return this.ctx;
   }
 
-  private initVoice() {
+  /**
+   * Sort and prioritize natural Brazilian voices.
+   * Gives higher weight to high-fidelity neural and desktop voices.
+   */
+  private scoreVoice(voice: SpeechSynthesisVoice): number {
+    let score = 0;
+    const name = voice.name.toLowerCase();
+    const lang = voice.lang.toLowerCase();
+
+    // Must be Portuguese
+    if (lang.includes('pt-br') || lang === 'pt_br') {
+      score += 100;
+    } else if (lang.startsWith('pt')) {
+      score += 20; // fallback (e.g. pt-PT)
+    } else {
+      return -100;
+    }
+
+    // High quality natural neural voices
+    if (name.includes('natural') || name.includes('online')) score += 50;
+    if (name.includes('francisca') || name.includes('antonio')) score += 40;
+    if (name.includes('google') && (lang.includes('br') || name.includes('brasil'))) score += 35;
+    if (name.includes('maria') || name.includes('luciana') || name.includes('felipe')) score += 30;
+    if (name.includes('letícia') || name.includes('rodrigo')) score += 25;
+
+    // Prefer default voices if flagged
+    if (voice.default) score += 5;
+
+    return score;
+  }
+
+  public initVoice() {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     const voices = window.speechSynthesis.getVoices();
-    // Prefer Portuguese Brazilian voice
-    this.ptVoice = voices.find(v => v.lang.toLowerCase().includes('pt-br')) ||
-                   voices.find(v => v.lang.toLowerCase().startsWith('pt')) ||
-                   null;
+
+    // Filter only Portuguese voices
+    const ptVoices = voices
+      .filter(v => {
+        const lang = v.lang.toLowerCase();
+        return lang.includes('pt-br') || lang.startsWith('pt');
+      })
+      .sort((a, b) => this.scoreVoice(b) - this.scoreVoice(a));
+
+    this.availablePtVoices = ptVoices;
+
+    // Check if user has a preferred voice selected
+    if (this.preferredVoiceURI) {
+      const found = ptVoices.find(v => v.voiceURI === this.preferredVoiceURI);
+      if (found) {
+        this.ptVoice = found;
+        return;
+      }
+    }
+
+    // Otherwise choose highest scoring voice
+    this.ptVoice = ptVoices[0] || null;
+  }
+
+  public getAvailablePtVoices(): SpeechSynthesisVoice[] {
+    if (this.availablePtVoices.length === 0) {
+      this.initVoice();
+    }
+    return this.availablePtVoices;
+  }
+
+  public getSelectedVoice(): SpeechSynthesisVoice | null {
+    if (!this.ptVoice) {
+      this.initVoice();
+    }
+    return this.ptVoice;
+  }
+
+  public setPreferredVoice(voiceURI: string) {
+    this.preferredVoiceURI = voiceURI;
+    this.initVoice();
+  }
+
+  /**
+   * Phonetic helper: Ensures isolated vowels and short letters are clearly pronounced
+   * without robotic clipping or English letter names.
+   */
+  private preparePedagogicalText(text: string): string {
+    const trimmed = text.trim();
+
+    // Isolated uppercase vowels often sound muffled or conjunction-like in speech engines
+    if (trimmed.length === 1) {
+      const char = trimmed.toUpperCase();
+      switch (char) {
+        case 'A':
+          return 'letra Á';
+        case 'E':
+          return 'letra É';
+        case 'I':
+          return 'letra Í';
+        case 'O':
+          return 'letra Ó';
+        case 'U':
+          return 'letra Ú';
+        default:
+          return `letra ${char}`;
+      }
+    }
+
+    return text;
   }
 
   // Play a soft playful tap sound when touching syllables/buttons
@@ -173,8 +293,8 @@ class SoundEngine {
   }
 
   /**
-   * Speak a syllable, word, or sentence with Portuguese pronunciation.
-   * Can speak slowly for children with phonological processing difficulties.
+   * Speak a syllable, word, or sentence with natural Portuguese pronunciation.
+   * Pitch is kept natural (1.0) for human-like tone.
    */
   speakText(text: string, rate: number = 0.85, onEnd?: () => void) {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -183,20 +303,20 @@ class SoundEngine {
     }
 
     try {
-      window.speechSynthesis.cancel(); // Stop any pending speech
+      window.speechSynthesis.cancel(); // Stop any pending speech immediately
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      const processedText = this.preparePedagogicalText(text);
+      const utterance = new SpeechSynthesisUtterance(processedText);
       utterance.lang = 'pt-BR';
-      utterance.rate = rate; // slightly slower for better phoneme perception
-      utterance.pitch = 1.15; // slightly higher pitch feels friendly and clear to kids
+      utterance.rate = rate; // Clear cadence for children
+      utterance.pitch = 1.0; // Natural, human-like voice (removes squeaky robotic pitch)
+
+      if (!this.ptVoice) {
+        this.initVoice();
+      }
 
       if (this.ptVoice) {
         utterance.voice = this.ptVoice;
-      } else {
-        this.initVoice();
-        if (this.ptVoice) {
-          utterance.voice = this.ptVoice;
-        }
       }
 
       utterance.onend = () => {
@@ -221,6 +341,10 @@ class SoundEngine {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
 
+    if (!this.ptVoice) {
+      this.initVoice();
+    }
+
     let currentIndex = 0;
     const speakNext = () => {
       if (currentIndex < syllables.length) {
@@ -229,22 +353,25 @@ class SoundEngine {
         const utt = new SpeechSynthesisUtterance(syl);
         utt.lang = 'pt-BR';
         utt.rate = rate;
-        utt.pitch = 1.1;
+        utt.pitch = 1.0;
         if (this.ptVoice) utt.voice = this.ptVoice;
         utt.onend = () => {
-          setTimeout(speakNext, 300); // 300ms pause between syllables
+          setTimeout(speakNext, 350); // Clear pedagogical pause between syllables
+        };
+        utt.onerror = () => {
+          setTimeout(speakNext, 200);
         };
         window.speechSynthesis.speak(utt);
       } else {
-        // Speak full word at the end
+        // Speak the blended full word at the end
         setTimeout(() => {
           const fullUtt = new SpeechSynthesisUtterance(fullWord);
           fullUtt.lang = 'pt-BR';
-          fullUtt.rate = rate * 1.05;
-          fullUtt.pitch = 1.2;
+          fullUtt.rate = Math.min(1.0, rate * 1.08);
+          fullUtt.pitch = 1.02;
           if (this.ptVoice) fullUtt.voice = this.ptVoice;
           window.speechSynthesis.speak(fullUtt);
-        }, 200);
+        }, 250);
       }
     };
 

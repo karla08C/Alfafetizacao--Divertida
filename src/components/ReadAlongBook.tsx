@@ -128,7 +128,7 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
             className={`px-3.5 py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
               currentStoryIndex === idx
                 ? 'bg-amber-500 text-white shadow-md border-b-3 border-amber-700'
-                : 'bg-white text-slate-700 hover:bg-amber-50 border border-slate-200'
+                : 'bg-white dark:bg-slate-850 text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
             }`}
           >
             <span>{s.coverEmoji}</span>
@@ -138,22 +138,22 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
       </div>
 
       {/* Main Book Card */}
-      <div className="bg-white rounded-3xl border-3 border-amber-200 shadow-md p-6 sm:p-10 relative overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border-3 border-amber-200 dark:border-slate-800 shadow-md p-6 sm:p-10 relative overflow-hidden">
         {/* Story Illustration Header */}
         <div className="flex flex-col items-center justify-center mb-6">
           <div className="text-7xl sm:text-8xl my-2 select-none animate-bounce">
             {story.illustration}
           </div>
-          <h3 className="text-xl sm:text-2xl font-black text-amber-900 tracking-wide mt-2">
+          <h3 className="text-xl sm:text-2xl font-black text-amber-900 dark:text-amber-300 tracking-wide mt-2">
             {formatCase(story.title, letterCase)}
           </h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
             Toque em qualquer palavra para ver e ouvir as sílabas
           </p>
         </div>
 
         {/* Story Text with Word Highlighting */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 my-6 p-4 sm:p-6 bg-amber-50/60 rounded-2xl border-2 border-amber-100 min-h-[100px]">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 my-6 p-4 sm:p-6 bg-amber-50/60 dark:bg-slate-800/80 rounded-2xl border-2 border-amber-100 dark:border-slate-700 min-h-[100px]">
           {story.words.map((w, index) => {
             const isActive = activeWordIndex === index;
             const isExpanded = expandedWordIdx === index;
@@ -166,7 +166,7 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
                   className={`px-3 sm:px-4 py-2 sm:py-3 rounded-2xl font-black text-2xl sm:text-3xl transition-all cursor-pointer select-none ${
                     isActive
                       ? 'bg-amber-400 text-amber-950 scale-110 shadow-md ring-4 ring-amber-300'
-                      : 'bg-white hover:bg-amber-100 text-slate-800 border-2 border-slate-200 hover:border-amber-300 shadow-xs'
+                      : 'bg-white dark:bg-slate-850 hover:bg-amber-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-200 dark:border-slate-700 hover:border-amber-300 shadow-xs'
                   }`}
                 >
                   {formatCase(w.text, letterCase)}
@@ -177,7 +177,7 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="flex gap-1 mt-2 p-1 bg-white rounded-xl border border-amber-300 shadow-xs"
+                    className="flex gap-1 mt-2 p-1 bg-white dark:bg-slate-900 rounded-xl border border-amber-300 dark:border-slate-700 shadow-xs"
                   >
                     {w.syllables.map((syl, sIdx) => {
                       const col = getSyllableColor(sIdx);
@@ -204,7 +204,7 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
         </div>
 
         {/* Controls Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-6 pt-4 border-t border-slate-100">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
           <button
             type="button"
             onClick={handleReadFullStory}

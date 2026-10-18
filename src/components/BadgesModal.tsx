@@ -12,6 +12,11 @@ import {
   Sparkles,
   TrendingUp,
   HeartHandshake,
+  Star,
+  Puzzle,
+  Search,
+  Music2,
+  Zap,
 } from 'lucide-react';
 import { Badge, DailyStudyStats, LetterCase } from '../types';
 import { soundEngine } from '../utils/audio';
@@ -151,73 +156,102 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
             <div
               className={`p-3.5 rounded-2xl border flex items-center justify-between ${
                 darkMode
-                  ? 'bg-gradient-to-r from-indigo-950/80 to-purple-950/80 border-indigo-800/60 text-slate-100'
-                  : 'bg-gradient-to-r from-amber-50 to-amber-100 border-amber-200 text-amber-900'
+                  ? 'bg-[#182234] border-slate-700 text-slate-100'
+                  : 'bg-amber-50 border-amber-200 text-amber-900'
               }`}
             >
-              <div className="flex items-center gap-2 text-sm font-bold">
-                <span className="text-2xl">⭐</span>
-                <span>Total de Estrelas Ganhas:</span>
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-bold">
+                <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
+                <span>Total de Estrelas Conquistadas:</span>
               </div>
-              <span className="text-2xl font-black text-amber-400">{totalStars}</span>
+              <span className="text-xl font-black text-amber-400">{totalStars}</span>
             </div>
 
             {/* Badges Grid */}
             <div className="grid grid-cols-2 gap-2.5 max-h-[50vh] md:max-h-[52vh] overflow-y-auto pr-1">
-              {badges.map(b => (
-                <div
-                  key={b.id}
-                  className={`p-3 rounded-2xl border-2 flex flex-col items-center text-center transition-all ${
-                    b.unlocked
-                      ? darkMode
-                        ? 'bg-[#1A233A] border-indigo-500/70 shadow-xs'
-                        : 'bg-amber-50/50 border-amber-300 shadow-xs'
-                      : darkMode
-                      ? 'bg-[#10172A] border-indigo-950/80 opacity-60'
-                      : 'bg-slate-50 border-slate-200 opacity-60'
-                  }`}
-                >
-                  <div className="relative my-1">
-                    <span className="text-3xl select-none">{b.icon}</span>
-                    {b.unlocked ? (
-                      <CheckCircle2
-                        className={`w-4 h-4 text-emerald-500 absolute -top-1 -right-2 rounded-full ${
-                          darkMode ? 'bg-slate-900' : 'bg-white'
-                        }`}
-                      />
-                    ) : (
-                      <Lock
-                        className={`w-4 h-4 text-slate-400 absolute -top-1 -right-2 rounded-full ${
-                          darkMode ? 'bg-slate-900' : 'bg-white'
-                        }`}
-                      />
-                    )}
-                  </div>
+              {badges.map(b => {
+                const renderBadgeIcon = () => {
+                  switch (b.id) {
+                    case 'first_word':
+                      return <Sparkles className="w-6 h-6 text-amber-500" />;
+                    case 'syllable_master':
+                      return <Puzzle className="w-6 h-6 text-purple-500" />;
+                    case 'sound_detective':
+                      return <Search className="w-6 h-6 text-sky-500" />;
+                    case 'rhyme_king':
+                      return <Music2 className="w-6 h-6 text-pink-500" />;
+                    case 'star_collector':
+                      return <Star className="w-6 h-6 fill-amber-400 text-amber-500" />;
+                    case 'story_reader':
+                      return <BookOpen className="w-6 h-6 text-emerald-500" />;
+                    case 'duel_champion':
+                      return <Zap className="w-6 h-6 text-amber-500" />;
+                    default:
+                      return <Award className="w-6 h-6 text-amber-500" />;
+                  }
+                };
+
+                return (
                   <div
-                    className={`text-xs sm:text-sm font-black mt-1 ${
-                      darkMode ? 'text-slate-100' : 'text-slate-800'
+                    key={b.id}
+                    className={`p-3 rounded-2xl border-2 flex flex-col items-center text-center transition-all ${
+                      b.unlocked
+                        ? darkMode
+                          ? 'bg-[#182234] border-indigo-500/70 shadow-xs'
+                          : 'bg-amber-50/50 border-amber-300 shadow-xs'
+                        : darkMode
+                        ? 'bg-[#10172A] border-slate-800 opacity-60'
+                        : 'bg-slate-50 border-slate-200 opacity-60'
                     }`}
                   >
-                    {b.title}
+                    <div className="relative my-1">
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center border ${
+                        b.unlocked
+                          ? darkMode ? 'bg-indigo-950/80 border-indigo-700' : 'bg-amber-100 border-amber-200'
+                          : darkMode ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
+                      }`}>
+                        {renderBadgeIcon()}
+                      </div>
+                      {b.unlocked ? (
+                        <CheckCircle2
+                          className={`w-4 h-4 text-emerald-500 absolute -top-1 -right-2 rounded-full ${
+                            darkMode ? 'bg-slate-900' : 'bg-white'
+                          }`}
+                        />
+                      ) : (
+                        <Lock
+                          className={`w-4 h-4 text-slate-400 absolute -top-1 -right-2 rounded-full ${
+                            darkMode ? 'bg-slate-900' : 'bg-white'
+                          }`}
+                        />
+                      )}
+                    </div>
+                    <div
+                      className={`text-xs sm:text-sm font-black mt-1 ${
+                        darkMode ? 'text-slate-100' : 'text-slate-800'
+                      }`}
+                    >
+                      {b.title}
+                    </div>
+                    <p
+                      className={`text-[10px] sm:text-[11px] mt-0.5 leading-tight ${
+                        darkMode ? 'text-slate-400' : 'text-slate-500'
+                      }`}
+                    >
+                      {b.description}
+                    </p>
+                    <div
+                      className={`mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        darkMode
+                          ? 'bg-[#131B2E] border-slate-700 text-indigo-300'
+                          : 'bg-white border-slate-200 text-slate-600'
+                      }`}
+                    >
+                      {b.unlocked ? 'Conquistada' : `${b.currentCount} / ${b.targetCount}`}
+                    </div>
                   </div>
-                  <p
-                    className={`text-[10px] sm:text-[11px] mt-0.5 leading-tight ${
-                      darkMode ? 'text-slate-400' : 'text-slate-500'
-                    }`}
-                  >
-                    {b.description}
-                  </p>
-                  <div
-                    className={`mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                      darkMode
-                        ? 'bg-[#131B2E] border-indigo-900 text-indigo-300'
-                        : 'bg-white border-slate-200 text-slate-600'
-                    }`}
-                  >
-                    {b.unlocked ? '✨ Conquistada!' : `${b.currentCount} / ${b.targetCount}`}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

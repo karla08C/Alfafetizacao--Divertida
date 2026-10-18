@@ -127,9 +127,9 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
-      <div className="w-full bg-white rounded-3xl border-2 border-slate-200 shadow-sm p-6 sm:p-8 text-center relative">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-4">
-          <span className="px-3 py-1 bg-pink-100 text-pink-800 rounded-full flex items-center gap-1">
+      <div className="w-full bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-8 text-center relative">
+        <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 mb-4">
+          <span className="px-3 py-1 bg-pink-100 dark:bg-pink-950/60 text-pink-800 dark:text-pink-300 rounded-full flex items-center gap-1.5 border border-pink-200 dark:border-pink-800">
             <Music2 className="w-3.5 h-3.5" /> Caça-Rimas Musical
           </span>
           <span>Desafio {index + 1} de {questions.length}</span>
@@ -137,17 +137,17 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
         {/* Target Word Display */}
         <div className="flex flex-col items-center my-3">
-          <div className="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">
+          <div className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
             Qual dessas palavras rima com:
           </div>
 
-          <div className="flex items-center gap-3 bg-pink-50 border-3 border-pink-300 p-4 sm:px-6 sm:py-4 rounded-3xl shadow-sm">
+          <div className="flex items-center gap-3 bg-pink-50 dark:bg-pink-950/40 border-3 border-pink-300 dark:border-pink-800 p-4 sm:px-6 sm:py-4 rounded-3xl shadow-sm">
             <span className="text-5xl sm:text-6xl">{current.targetEmoji}</span>
             <div className="text-left">
-              <div className="text-2xl sm:text-3xl font-black text-pink-900 tracking-wide">
+              <div className="text-2xl sm:text-3xl font-black text-pink-900 dark:text-pink-200 tracking-wide">
                 {formatCase(current.targetWord, letterCase)}
               </div>
-              <div className="text-xs font-bold text-pink-600">
+              <div className="text-xs font-bold text-pink-600 dark:text-pink-400">
                 Termina com <span className="underline decoration-wavy">-{formatCase(current.rhymeEnding, letterCase)}</span>
               </div>
             </div>
@@ -169,11 +169,11 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
             const showSuccess = isAnswered && opt.isCorrect;
             const showFail = isSelected && !opt.isCorrect;
 
-            let cardStyle = 'bg-slate-50 border-slate-200 hover:border-pink-300 hover:bg-pink-50/40';
+            let cardStyle = 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-pink-300 dark:hover:border-pink-500 hover:bg-pink-50/40 dark:hover:bg-slate-700/60';
             if (showSuccess) {
-              cardStyle = 'bg-emerald-50 border-emerald-500 ring-3 ring-emerald-300';
+              cardStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-3 ring-emerald-300 dark:ring-emerald-700';
             } else if (showFail) {
-              cardStyle = 'bg-rose-50 border-rose-300 opacity-70';
+              cardStyle = 'bg-rose-50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 opacity-70';
             }
 
             return (
@@ -196,14 +196,14 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
                   {opt.emoji}
                 </div>
 
-                <div className="text-lg sm:text-xl font-extrabold text-slate-800">
+                <div className="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-slate-100">
                   {formatCase(opt.word, letterCase)}
                 </div>
 
                 <button
                   type="button"
                   onClick={(e) => handleHearOption(opt.word, e)}
-                  className="p-1.5 rounded-lg bg-white/80 hover:bg-white text-slate-600 shadow-xs border border-slate-200 mt-1 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                  className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 shadow-xs border border-slate-200 dark:border-slate-600 mt-1 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
                   title={`Ouvir ${opt.word}`}
                 >
                   <Volume2 className="w-4 h-4" />
@@ -224,10 +224,11 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-center gap-3"
+            className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-3"
           >
-            <p className="text-sm font-bold text-pink-800 bg-pink-100 px-4 py-2 rounded-xl">
-              🎵 Rimou perfeitamente!
+            <p className="text-sm font-bold text-pink-800 dark:text-pink-300 bg-pink-100 dark:bg-pink-950/60 px-4 py-2 rounded-xl flex items-center gap-1.5 border border-pink-200 dark:border-pink-800">
+              <Music2 className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+              <span>Rimou perfeitamente!</span>
             </p>
 
             <button

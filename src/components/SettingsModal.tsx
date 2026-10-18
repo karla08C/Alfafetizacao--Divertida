@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { X, Settings, Volume2, Type, Sliders, Info, Sparkles, Moon, Sun } from 'lucide-react';
-import { AppSettings, LetterCase } from '../types';
+import { X, Settings, Volume2, Type, Info, Moon, Sun, Play, Check } from 'lucide-react';
+import { AppSettings } from '../types';
 import { soundEngine } from '../utils/audio';
 
 interface SettingsModalProps {
@@ -17,32 +17,70 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   settings,
   onUpdateSettings,
 }) => {
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [isPlayingTest, setIsPlayingTest] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const updateVoices = () => {
+      setAvailableVoices(soundEngine.getAvailablePtVoices());
+    };
+    updateVoices();
+    const unsub = soundEngine.onVoicesChanged(updateVoices);
+    return unsub;
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const isDark = settings.darkMode;
+  const currentVoice = soundEngine.getSelectedVoice();
+
+  const handleTestVoice = () => {
+    soundEngine.playPop();
+    setIsPlayingTest(true);
+    soundEngine.speakText('Olá! Estou pronto para ler com você! A, E, I, O, U!', settings.speechRate, () => {
+      setIsPlayingTest(false);
+    });
+  };
+
+  const handleSelectVoice = (uri: string) => {
+    soundEngine.setPreferredVoice(uri);
+    onUpdateSettings({ preferredVoiceURI: uri });
+    soundEngine.speakText('Voz selecionada com sucesso!', settings.speechRate);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
+        initial={{ scale: 0.92, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className={`rounded-3xl border-3 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative max-h-[90vh] flex flex-col transition-colors ${
+        exit={{ scale: 0.92, opacity: 0 }}
+        className={`rounded-3xl border-2 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative max-h-[90vh] flex flex-col transition-colors ${
           isDark
-            ? 'bg-[#131B2E] border-indigo-500/70 text-slate-100'
+            ? 'bg-[#111827] border-indigo-500/60 text-slate-100 shadow-indigo-950/50'
             : 'bg-white border-amber-300 text-slate-800'
         }`}
       >
         {/* Header */}
-        <div className={`flex items-center justify-between pb-4 border-b ${isDark ? 'border-indigo-900/60' : 'border-slate-100'}`}>
+        <div
+          className={`flex items-center justify-between pb-4 border-b ${
+            isDark ? 'border-slate-800' : 'border-slate-100'
+          }`}
+        >
           <div className="flex items-center gap-2.5">
-            <div className={`p-2.5 rounded-2xl ${isDark ? 'bg-indigo-900/60 text-indigo-300' : 'bg-amber-100 text-amber-800'}`}>
-              <Settings className="w-6 h-6" />
+            <div
+              className={`p-2.5 rounded-2xl ${
+                isDark ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-amber-100 text-amber-800'
+              }`}
+            >
+              <Settings className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={`text-xl font-black ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>Ajustes Pedagógicos</h3>
+              <h3 className={`text-lg font-black ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+                Ajustes e Acessibilidade
+              </h3>
               <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                Personalize a experiência de leitura e acessibilidade
+                Personalize áudio, modo noturno e tipografia
               </p>
             </div>
           </div>
@@ -52,7 +90,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               soundEngine.playPop();
               onClose();
             }}
-            className={`p-2 rounded-xl cursor-pointer ${isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}
+            className={`p-2 rounded-xl cursor-pointer ${
+              isDark
+                ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+            }`}
           >
             <X className="w-5 h-5" />
           </button>
@@ -60,19 +102,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Settings Body */}
         <div className="overflow-y-auto pr-1 py-4 flex flex-col gap-4">
-          {/* Modo Noturno (Tons Suaves Azul Escuro & Roxo) */}
-          <div className={`p-4 rounded-2xl border transition-colors ${isDark ? 'bg-[#1A233A] border-indigo-900/60' : 'bg-slate-50 border-slate-200'}`}>
+          {/* 1. Modo Noturno / Dark Mode */}
+          <div
+            className={`p-4 rounded-2xl border transition-colors ${
+              isDark ? 'bg-[#182234] border-slate-700' : 'bg-slate-50 border-slate-200'
+            }`}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-start gap-2.5">
-                <div className={`p-2 rounded-xl mt-0.5 ${isDark ? 'bg-indigo-950/80 text-indigo-300' : 'bg-amber-100 text-amber-700'}`}>
-                  {isDark ? <Moon className="w-5 h-5 text-indigo-400" /> : <Sun className="w-5 h-5 text-amber-600" />}
+                <div
+                  className={`p-2 rounded-xl mt-0.5 ${
+                    isDark ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-amber-100 text-amber-700'
+                  }`}
+                >
+                  {isDark ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-amber-600" />}
                 </div>
                 <div>
                   <div className={`text-sm font-bold ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
-                    Modo Noturno (Estudo Noturno)
+                    Modo Escuro (Descanso Ocular)
                   </div>
                   <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    Paleta suave em tons de azul escuro e roxo para reduzir o cansaço visual.
+                    Cores em tons suaves de azul e grafite para reduzir a fadiga da visão.
                   </p>
                 </div>
               </div>
@@ -83,22 +133,116 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   onUpdateSettings({ darkMode: !settings.darkMode });
                 }}
                 className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${
-                  settings.darkMode ? 'bg-indigo-500 justify-end' : 'bg-slate-300 justify-start'
+                  settings.darkMode ? 'bg-indigo-600 justify-end' : 'bg-slate-300 justify-start'
                 }`}
+                title="Alternar Modo Escuro"
               >
                 <div className="bg-white w-4 h-4 rounded-full shadow-md" />
               </button>
             </div>
           </div>
 
-          {/* 1. Letter Case (Caixa Alta / Minúscula) */}
-          <div className={`p-4 rounded-2xl border transition-colors ${isDark ? 'bg-[#1A233A] border-indigo-900/60' : 'bg-slate-50 border-slate-200'}`}>
+          {/* 2. Seleção e Ajuste de Voz Natural */}
+          <div
+            className={`p-4 rounded-2xl border transition-colors ${
+              isDark ? 'bg-[#182234] border-slate-700' : 'bg-slate-50 border-slate-200'
+            }`}
+          >
+            <div className={`flex items-center justify-between mb-1.5`}>
+              <div className={`flex items-center gap-2 text-sm font-bold ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+                <Volume2 className="w-4 h-4 text-amber-500" />
+                <span>Voz em Português Brasileiro</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleTestVoice}
+                disabled={isPlayingTest}
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
+                  isPlayingTest
+                    ? 'bg-amber-500 text-white animate-pulse'
+                    : isDark
+                    ? 'bg-indigo-950 text-indigo-300 border border-indigo-700 hover:bg-indigo-900'
+                    : 'bg-white text-amber-900 border border-amber-300 hover:bg-amber-100 shadow-2xs'
+                }`}
+              >
+                <Play className="w-3 h-3 fill-current" />
+                <span>{isPlayingTest ? 'Falando...' : 'Ouvir Teste'}</span>
+              </button>
+            </div>
+
+            <p className={`text-xs mb-3 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              Voz selecionada: <span className="font-bold text-amber-500">{currentVoice?.name || 'Padrão do Sistema'}</span>
+            </p>
+
+            {availableVoices.length > 0 && (
+              <div className="flex flex-col gap-1.5 mb-3">
+                <label className={`text-2xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Vozes Detectadas no seu Navegador:
+                </label>
+                <select
+                  value={currentVoice?.voiceURI || ''}
+                  onChange={e => handleSelectVoice(e.target.value)}
+                  className={`w-full p-2.5 rounded-xl text-xs font-semibold border cursor-pointer ${
+                    isDark
+                      ? 'bg-[#111827] border-slate-600 text-slate-100 focus:border-indigo-500'
+                      : 'bg-white border-slate-300 text-slate-800 focus:border-amber-500'
+                  }`}
+                >
+                  {availableVoices.map(voice => (
+                    <option key={voice.voiceURI} value={voice.voiceURI}>
+                      {voice.name} ({voice.lang})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Velocidade da fala */}
+            <div className="flex flex-col gap-1.5">
+              <span className={`text-2xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Velocidade da Narração:
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: 'Muito Calma', rate: 0.7 },
+                  { label: 'Ideal (Recomendada)', rate: 0.85 },
+                  { label: 'Normal', rate: 1.0 },
+                ].map(item => (
+                  <button
+                    key={item.rate}
+                    type="button"
+                    onClick={() => {
+                      soundEngine.playPop();
+                      onUpdateSettings({ speechRate: item.rate });
+                      soundEngine.speakText('Velocidade de leitura ajustada.', item.rate);
+                    }}
+                    className={`py-2 px-1 rounded-xl text-xs font-bold border cursor-pointer transition-all text-center ${
+                      settings.speechRate === item.rate
+                        ? 'bg-amber-500 text-white border-amber-600 shadow-2xs font-black'
+                        : isDark
+                        ? 'bg-[#111827] text-slate-300 border-slate-700 hover:bg-slate-800'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Formato das Letras (Bastão vs minúsculas) */}
+          <div
+            className={`p-4 rounded-2xl border transition-colors ${
+              isDark ? 'bg-[#182234] border-slate-700' : 'bg-slate-50 border-slate-200'
+            }`}
+          >
             <div className={`flex items-center gap-2 text-sm font-bold mb-1 ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
               <Type className="w-4 h-4 text-amber-500" />
               <span>Formato das Letras</span>
             </div>
             <p className={`text-xs mb-3 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              Crianças no início da alfabetização ou com dislexia costumam preferir <strong>Letra Bastão (Caixa Alta)</strong> pois evita confusões espelhadas (b, d, p, q).
+              <strong>Letras Bastão (Caixa Alta)</strong> são pedagogicamente comprovadas como ideais para o início da alfabetização e apoio a crianças com dislexia.
             </p>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -107,15 +251,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   soundEngine.playPop();
                   onUpdateSettings({ letterCase: 'uppercase' });
                 }}
-                className={`py-2.5 px-3 rounded-xl font-bold text-sm border-2 cursor-pointer transition-all ${
+                className={`py-2 px-3 rounded-xl font-bold text-xs sm:text-sm border-2 cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
                   settings.letterCase === 'uppercase'
-                    ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                    ? 'bg-amber-500 text-white border-amber-600 shadow-2xs font-black'
                     : isDark
-                    ? 'bg-[#131B2E] text-slate-200 border-indigo-950 hover:bg-[#202c48]'
+                    ? 'bg-[#111827] text-slate-200 border-slate-700 hover:bg-slate-800'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
                 }`}
               >
-                LETRAS BASTÃO (MAIÚSCULAS)
+                {settings.letterCase === 'uppercase' && <Check className="w-3.5 h-3.5" />}
+                <span>BASTÃO (MAIÚSCULA)</span>
               </button>
               <button
                 type="button"
@@ -123,28 +268,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   soundEngine.playPop();
                   onUpdateSettings({ letterCase: 'lowercase' });
                 }}
-                className={`py-2.5 px-3 rounded-xl font-bold text-sm border-2 cursor-pointer transition-all ${
+                className={`py-2 px-3 rounded-xl font-bold text-xs sm:text-sm border-2 cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
                   settings.letterCase === 'lowercase'
-                    ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                    ? 'bg-amber-500 text-white border-amber-600 shadow-2xs font-black'
                     : isDark
-                    ? 'bg-[#131B2E] text-slate-200 border-indigo-950 hover:bg-[#202c48]'
+                    ? 'bg-[#111827] text-slate-200 border-slate-700 hover:bg-slate-800'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
                 }`}
               >
-                letras minúsculas
+                {settings.letterCase === 'lowercase' && <Check className="w-3.5 h-3.5" />}
+                <span>minúsculas</span>
               </button>
             </div>
           </div>
 
-          {/* 2. Dyslexia Spacing */}
-          <div className={`p-4 rounded-2xl border transition-colors ${isDark ? 'bg-[#1A233A] border-indigo-900/60' : 'bg-slate-50 border-slate-200'}`}>
+          {/* 4. Espaçamento Amplo (Dislexia) */}
+          <div
+            className={`p-4 rounded-2xl border transition-colors ${
+              isDark ? 'bg-[#182234] border-slate-700' : 'bg-slate-50 border-slate-200'
+            }`}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <div className={`text-sm font-bold ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
                   Espaçamento Amplo (Apoio à Dislexia)
                 </div>
                 <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Aumenta o espaço entre letras e palavras para evitar aglomeração visual.
+                  Aumenta o espaço entre letras e palavras para evitar aglomeração e facilitar a leitura.
                 </p>
               </div>
               <button
@@ -162,68 +312,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* 3. Speech Rate (Velocidade da Voz) */}
-          <div className={`p-4 rounded-2xl border transition-colors ${isDark ? 'bg-[#1A233A] border-indigo-900/60' : 'bg-slate-50 border-slate-200'}`}>
-            <div className={`flex items-center gap-2 text-sm font-bold mb-1 ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
-              <Volume2 className="w-4 h-4 text-amber-500" />
-              <span>Velocidade da Voz e Narração</span>
-            </div>
-            <p className={`text-xs mb-3 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              Falas mais lentas ajudam a criança a discriminar cada fonema com clareza.
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { label: 'Muito Calma', rate: 0.7 },
-                { label: 'Calma (Ideal)', rate: 0.85 },
-                { label: 'Normal', rate: 1.0 },
-              ].map(item => (
-                <button
-                  key={item.rate}
-                  type="button"
-                  onClick={() => {
-                    soundEngine.playPop();
-                    onUpdateSettings({ speechRate: item.rate });
-                    soundEngine.speakText('Olá! Essa é a minha velocidade de leitura.', item.rate);
-                  }}
-                  className={`py-2 px-2 rounded-xl text-xs font-bold border-2 cursor-pointer transition-all ${
-                    settings.speechRate === item.rate
-                      ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
-                      : isDark
-                      ? 'bg-[#131B2E] text-slate-200 border-indigo-950 hover:bg-[#202c48]'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 4. Tips for Parents and Teachers */}
-          <div className={`p-4 rounded-2xl border text-xs flex gap-2.5 ${
-            isDark
-              ? 'bg-[#182035] border-indigo-900/70 text-indigo-200'
-              : 'bg-amber-50/70 border-amber-200 text-amber-950'
-          }`}>
-            <Info className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isDark ? 'text-indigo-400' : 'text-amber-700'}`} />
+          {/* 5. Dica Pedagógica */}
+          <div
+            className={`p-3.5 rounded-2xl border text-xs flex gap-2.5 ${
+              isDark
+                ? 'bg-indigo-950/60 border-indigo-900/60 text-indigo-200'
+                : 'bg-amber-50/70 border-amber-200 text-amber-950'
+            }`}
+          >
+            <Info className={`w-4 h-4 flex-shrink-0 mt-0.5 ${isDark ? 'text-indigo-400' : 'text-amber-700'}`} />
             <div>
-              <strong className="block font-bold mb-1">Dica Pedagógica:</strong>
-              Celebre cada acerto e nunca apresse a criança. Ler requer conexão neural entre o som ouvido e a letra vista. Brinque 10 a 15 minutos por dia!
+              <strong className="block font-bold mb-0.5">Orientações para Pais e Educadores:</strong>
+              Reserve de 10 a 15 minutos diários de estudo com a criança. O reforço positivo e a escuta paciente dos sons formam a base mais sólida da alfabetização.
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className={`pt-4 border-t ${isDark ? 'border-indigo-900/60' : 'border-slate-100'}`}>
+        <div className={`pt-4 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
           <button
             type="button"
             onClick={() => {
               soundEngine.playPop();
               onClose();
             }}
-            className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-base shadow-sm cursor-pointer"
+            className="w-full py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-sm cursor-pointer transition-colors"
           >
-            Salvar e Voltar
+            Concluir e Salvar
           </button>
         </div>
       </motion.div>
