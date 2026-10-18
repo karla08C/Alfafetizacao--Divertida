@@ -41,6 +41,7 @@ interface LiteracyTrailProps {
   voiceEnabled: boolean;
   darkMode: boolean;
   totalStars: number;
+  activeProfileName?: string;
 }
 
 export const LiteracyTrail: React.FC<LiteracyTrailProps> = ({
@@ -55,10 +56,17 @@ export const LiteracyTrail: React.FC<LiteracyTrailProps> = ({
   voiceEnabled,
   darkMode,
   totalStars,
+  activeProfileName,
 }) => {
   const [selectedMissionForModal, setSelectedMissionForModal] = useState<TrailMission | null>(null);
   const [isGraduationModalOpen, setIsGraduationModalOpen] = useState(false);
-  const [studentName, setStudentName] = useState('Pequeno Campeão');
+  const [studentName, setStudentName] = useState(activeProfileName || 'Pequeno Campeão');
+
+  React.useEffect(() => {
+    if (activeProfileName) {
+      setStudentName(activeProfileName);
+    }
+  }, [activeProfileName]);
 
   const todayRoutine = getTodayRoutinePlan();
 
@@ -601,17 +609,17 @@ export const LiteracyTrail: React.FC<LiteracyTrailProps> = ({
 
       {/* GRADUATION DIPLOMA MODAL */}
       {isGraduationModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto print:fixed print:inset-0 print:p-0 print:bg-white print:z-[99999]">
           <motion.div
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className={`w-full max-w-xl p-6 sm:p-8 rounded-3xl border-2 text-slate-800 shadow-2xl relative my-8 ${
-              darkMode ? 'bg-[#111827] border-amber-500 text-slate-100' : 'bg-white border-amber-400 text-slate-800'
+            className={`w-full max-w-xl p-6 sm:p-8 rounded-3xl border-2 text-slate-800 shadow-2xl relative my-8 print:my-0 print:p-4 print:border-none print:shadow-none print:w-full print:max-w-none ${
+              darkMode ? 'bg-[#111827] border-amber-500 text-slate-100 print:bg-white print:text-slate-900' : 'bg-white border-amber-400 text-slate-800'
             }`}
           >
             {/* Certificate Frame */}
             <div className={`border-2 border-dashed p-6 rounded-2xl text-center flex flex-col items-center gap-4 ${
-              darkMode ? 'border-amber-500/50 bg-[#182234]' : 'border-amber-300 bg-amber-50/40'
+              darkMode ? 'border-amber-500/50 bg-[#182234] print:border-amber-600 print:bg-amber-50/20' : 'border-amber-300 bg-amber-50/40'
             }`}>
               <div className="w-16 h-16 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-md">
                 <GraduationCap className="w-8 h-8" />
@@ -636,23 +644,23 @@ export const LiteracyTrail: React.FC<LiteracyTrailProps> = ({
                   value={studentName}
                   onChange={e => setStudentName(e.target.value)}
                   className={`w-full max-w-xs text-center font-black text-xl sm:text-2xl border-b-2 border-amber-400 bg-transparent focus:outline-hidden pb-1 ${
-                    darkMode ? 'text-amber-300' : 'text-amber-900'
+                    darkMode ? 'text-amber-300 print:text-amber-900' : 'text-amber-900'
                   }`}
                   placeholder="Nome da Criança"
                 />
-                <span className="text-2xs text-slate-400">(Clique no nome para editar)</span>
+                <span className="text-2xs text-slate-400 print:hidden">(Clique no nome para editar)</span>
               </div>
 
               <div className="grid grid-cols-3 gap-2.5 w-full max-w-sm text-center">
-                <div className={`p-2 rounded-xl border ${darkMode ? 'bg-[#111827] border-slate-700' : 'bg-white border-amber-200'}`}>
+                <div className={`p-2 rounded-xl border ${darkMode ? 'bg-[#111827] border-slate-700 print:bg-white print:border-amber-300' : 'bg-white border-amber-200'}`}>
                   <span className="block text-2xs text-slate-400 font-bold">VOGAIS & SONS</span>
                   <span className="text-xs font-black text-emerald-500">Concluído</span>
                 </div>
-                <div className={`p-2 rounded-xl border ${darkMode ? 'bg-[#111827] border-slate-700' : 'bg-white border-amber-200'}`}>
+                <div className={`p-2 rounded-xl border ${darkMode ? 'bg-[#111827] border-slate-700 print:bg-white print:border-amber-300' : 'bg-white border-amber-200'}`}>
                   <span className="block text-2xs text-slate-400 font-bold">SÍLABAS</span>
                   <span className="text-xs font-black text-emerald-500">Concluído</span>
                 </div>
-                <div className={`p-2 rounded-xl border ${darkMode ? 'bg-[#111827] border-slate-700' : 'bg-white border-amber-200'}`}>
+                <div className={`p-2 rounded-xl border ${darkMode ? 'bg-[#111827] border-slate-700 print:bg-white print:border-amber-300' : 'bg-white border-amber-200'}`}>
                   <span className="block text-2xs text-slate-400 font-bold">LEITURA</span>
                   <span className="text-xs font-black text-emerald-500">Autônoma</span>
                 </div>
@@ -664,12 +672,12 @@ export const LiteracyTrail: React.FC<LiteracyTrailProps> = ({
                 ))}
               </div>
 
-              <p className="text-xs text-slate-600 dark:text-slate-300 italic max-w-md">
-                "Parabéns por cada pedacinho lido, cada som descoberto e cada história compartilhada. O mundo da leitura está aberto para você!"
+              <p className="text-xs text-slate-600 dark:text-slate-300 italic max-w-md print:text-slate-800">
+                &quot;Parabéns por cada pedacinho lido, cada som descoberto e cada história compartilhada. O mundo da leitura está aberto para você!&quot;
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mt-2 w-full">
+              <div className="flex flex-wrap items-center justify-center gap-3 mt-2 w-full print:hidden">
                 <button
                   type="button"
                   onClick={() => window.print()}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Volume2, Play, Pause, BookOpen, Sparkles, ChevronRight, ChevronLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -33,22 +33,40 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
     return 0;
   });
 
+  const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [expandedWordIdx, setExpandedWordIdx] = useState<number | null>(null);
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+
   useEffect(() => {
     if (targetStoryId) {
       const idx = stories.findIndex(s => s.id === targetStoryId);
       if (idx !== -1 && idx !== currentStoryIndex) {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        window.speechSynthesis?.cancel();
+        setIsPlaying(false);
+        setActiveWordIndex(null);
         setCurrentStoryIndex(idx);
       }
     }
-  }, [targetStoryId, stories]);
-  const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [expandedWordIdx, setExpandedWordIdx] = useState<number | null>(null);
+  }, [targetStoryId, stories, currentStoryIndex]);
 
   const story = stories[currentStoryIndex];
 
   const handleSelectStory = (idx: number) => {
     soundEngine.playPop();
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     window.speechSynthesis?.cancel();
     setIsPlaying(false);
     setActiveWordIndex(null);
@@ -59,6 +77,7 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
 
   const handleReadFullStory = () => {
     if (isPlaying) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       window.speechSynthesis?.cancel();
       setIsPlaying(false);
       setActiveWordIndex(null);
@@ -72,14 +91,22 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
     let idx = 0;
 
     const readNextWord = () => {
+      if (!isMountedRef.current) return;
+
       if (idx < story.words.length) {
         setActiveWordIndex(idx);
         const w = story.words[idx].text;
         idx++;
 
-        soundEngine.speakText(w, speechRate, () => {
-          setTimeout(readNextWord, 250); // Pedagogical pacing between words
-        });
+        if (voiceEnabled) {
+          soundEngine.speakText(w, speechRate, () => {
+            if (!isMountedRef.current) return;
+            timeoutRef.current = setTimeout(readNextWord, 250); // Pedagogical pacing between words
+          });
+        } else {
+          // Visual read-along pacing when voice is muted
+          timeoutRef.current = setTimeout(readNextWord, 700);
+        }
       } else {
         // Story finished!
         setIsPlaying(false);
@@ -113,7 +140,9 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
     setActiveWordIndex(index);
     setExpandedWordIdx(expandedWordIdx === index ? null : index);
     const wordObj = story.words[index];
-    soundEngine.speakText(wordObj.text, speechRate);
+    if (voiceEnabled) {
+      soundEngine.speakText(wordObj.text, speechRate);
+    }
   };
 
   return (

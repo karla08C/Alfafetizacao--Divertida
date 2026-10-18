@@ -210,14 +210,14 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
       {/* Top Duel Arena Stats Card */}
-      <div className="w-full bg-white rounded-3xl border-2 border-slate-200 shadow-sm p-5 sm:p-7 relative overflow-hidden">
+      <div className="w-full bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm p-5 sm:p-7 relative overflow-hidden transition-colors">
         {/* Arena top badges */}
         <div className="flex items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 bg-gradient-to-r from-amber-500 to-rose-500 text-white font-black rounded-full text-xs flex items-center gap-1 shadow-xs">
               <Zap className="w-3.5 h-3.5 fill-current" /> Duelo Fonético
             </span>
-            <span className="text-xs text-slate-500 font-bold">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">
               Rodada {questionIndex + 1} de {questions.length}
             </span>
           </div>
@@ -229,7 +229,7 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
                 initial={{ scale: 0.8 }}
                 animate={{ scale: [1, 1.15, 1] }}
                 transition={{ repeat: Infinity, duration: 1 }}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-orange-100 text-orange-700 text-xs font-black border border-orange-300"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 text-xs font-black border border-orange-300 dark:border-orange-800"
               >
                 <Flame className="w-4 h-4 fill-orange-500 text-orange-500" />
                 <span>{streak}x Combo</span>
@@ -237,7 +237,7 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
             )}
 
             {/* Duel Score */}
-            <div className="px-3 py-1 rounded-xl bg-slate-100 text-slate-800 text-xs font-extrabold border border-slate-200">
+            <div className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-extrabold border border-slate-200 dark:border-slate-700">
               Pontos: {score}
             </div>
 
@@ -247,8 +247,8 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
               onClick={togglePause}
               className={`p-2 rounded-xl text-xs font-bold flex items-center gap-1 border transition-colors cursor-pointer ${
                 isTimerPaused
-                  ? 'bg-amber-100 text-amber-900 border-amber-300'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
+                  ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700'
+                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
               }`}
               title={isTimerPaused ? 'Retomar tempo' : 'Pausar tempo'}
             >
@@ -270,20 +270,20 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
         {/* Countdown Timer Progress Bar */}
         <div className="mb-6">
           <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-            <span className="flex items-center gap-1 text-slate-600">
-              <Clock className={`w-4 h-4 ${isUrgent ? 'text-rose-500 animate-pulse' : 'text-slate-500'}`} />
+            <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300">
+              <Clock className={`w-4 h-4 ${isUrgent ? 'text-rose-500 animate-pulse' : 'text-slate-500 dark:text-slate-400'}`} />
               Tempo Restante:
             </span>
             <span
               className={`font-mono text-sm font-black px-2 py-0.5 rounded-lg ${
-                isUrgent ? 'bg-rose-100 text-rose-700 animate-pulse' : 'bg-slate-100 text-slate-700'
+                isUrgent ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 animate-pulse' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
               }`}
             >
               {timeLeft}s
             </span>
           </div>
 
-          <div className="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200 p-0.5">
+          <div className="w-full h-3.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 p-0.5">
             <motion.div
               className={`h-full rounded-full transition-all duration-300 ${
                 timeLeft > 7
@@ -299,12 +299,12 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
 
         {/* Central Duel Target Sound */}
         <div className="flex flex-col items-center justify-center my-2 text-center">
-          <div className="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">
+          <div className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
             Qual dessas 2 palavras completa o som inicial:
           </div>
 
-          <div className="inline-flex items-center gap-3 bg-amber-50 border-3 border-amber-400 px-6 sm:px-8 py-3.5 rounded-3xl shadow-sm mb-2">
-            <span className="text-4xl sm:text-6xl font-black text-amber-900 tracking-wider">
+          <div className="inline-flex items-center gap-3 bg-amber-50 dark:bg-amber-950/40 border-3 border-amber-400 dark:border-amber-600 px-6 sm:px-8 py-3.5 rounded-3xl shadow-sm mb-2">
+            <span className="text-4xl sm:text-6xl font-black text-amber-900 dark:text-amber-300 tracking-wider">
               {formatCase(currentQ.initialSound, letterCase)}
             </span>
             <button
@@ -328,11 +328,11 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
             const showFail = isChosen && !opt.isCorrect;
 
             let cardStyle =
-              'bg-slate-50 border-slate-200 hover:border-amber-400 hover:bg-amber-50/40';
+              'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:bg-amber-50/40 dark:hover:bg-slate-700/60';
             if (showSuccess) {
-              cardStyle = 'bg-emerald-50 border-emerald-500 ring-4 ring-emerald-300';
+              cardStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-4 ring-emerald-300 dark:ring-emerald-700';
             } else if (showFail) {
-              cardStyle = 'bg-rose-50 border-rose-300 opacity-75';
+              cardStyle = 'bg-rose-50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 opacity-75';
             }
 
             return (
@@ -354,7 +354,7 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
                   {opt.emoji}
                 </div>
 
-                <div className="text-2xl sm:text-3xl font-black text-slate-800 tracking-wide">
+                <div className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-wide">
                   {formatCase(opt.word, letterCase)}
                 </div>
 
@@ -362,9 +362,9 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
                   <button
                     type="button"
                     onClick={e => handleHearOption(opt.word, e)}
-                    className="px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs flex items-center gap-1.5 text-xs font-bold hover:bg-slate-50 cursor-pointer active:scale-95 transition-transform"
+                    className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 shadow-xs flex items-center gap-1.5 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-600 cursor-pointer active:scale-95 transition-transform"
                   >
-                    <Volume2 className="w-4 h-4 text-amber-600" />
+                    <Volume2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     <span>Ouvir</span>
                   </button>
                 </div>
@@ -391,11 +391,11 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
             const showFail = isChosen && !opt.isCorrect;
 
             let cardStyle =
-              'bg-slate-50 border-slate-200 hover:border-amber-400 hover:bg-amber-50/40';
+              'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:bg-amber-50/40 dark:hover:bg-slate-700/60';
             if (showSuccess) {
-              cardStyle = 'bg-emerald-50 border-emerald-500 ring-4 ring-emerald-300';
+              cardStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-4 ring-emerald-300 dark:ring-emerald-700';
             } else if (showFail) {
-              cardStyle = 'bg-rose-50 border-rose-300 opacity-75';
+              cardStyle = 'bg-rose-50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 opacity-75';
             }
 
             return (
@@ -417,7 +417,7 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
                   {opt.emoji}
                 </div>
 
-                <div className="text-2xl sm:text-3xl font-black text-slate-800 tracking-wide">
+                <div className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-wide">
                   {formatCase(opt.word, letterCase)}
                 </div>
 
@@ -425,9 +425,9 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
                   <button
                     type="button"
                     onClick={e => handleHearOption(opt.word, e)}
-                    className="px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs flex items-center gap-1.5 text-xs font-bold hover:bg-slate-50 cursor-pointer active:scale-95 transition-transform"
+                    className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 shadow-xs flex items-center gap-1.5 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-600 cursor-pointer active:scale-95 transition-transform"
                   >
-                    <Volume2 className="w-4 h-4 text-amber-600" />
+                    <Volume2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     <span>Ouvir</span>
                   </button>
                 </div>
@@ -454,15 +454,15 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3"
+              className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3"
             >
-              <div className="text-sm font-bold text-slate-800 flex items-center gap-2">
+              <div className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 {isTimeOut ? (
-                  <span className="text-amber-800 bg-amber-100 px-3.5 py-1.5 rounded-xl">
+                  <span className="text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 px-3.5 py-1.5 rounded-xl border border-amber-300 dark:border-amber-800">
                     ⏳ O tempo acabou! {currentQ.explanation}
                   </span>
                 ) : (
-                  <span className="text-emerald-800 bg-emerald-100 px-3.5 py-1.5 rounded-xl">
+                  <span className="text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-3.5 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800">
                     ✨ {currentQ.explanation}
                   </span>
                 )}
@@ -471,7 +471,7 @@ export const PhoneticDuelGame: React.FC<PhoneticDuelGameProps> = ({
               <button
                 type="button"
                 onClick={handleNextQuestion}
-                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-extrabold text-base flex items-center gap-2 shadow-lg shadow-amber-200 border-b-4 border-rose-700 active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
+                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-extrabold text-base flex items-center gap-2 shadow-lg shadow-amber-200 dark:shadow-none border-b-4 border-rose-700 active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
               >
                 <Sparkles className="w-5 h-5" />
                 <span>Próximo Duelo</span>

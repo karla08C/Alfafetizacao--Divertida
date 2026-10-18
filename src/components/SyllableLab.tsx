@@ -175,15 +175,15 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col gap-6">
       {/* Interactive Fusion Station */}
-      <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm p-6 sm:p-8">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-8 transition-colors">
         <div className="text-center mb-5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-bold mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 rounded-full text-xs font-bold mb-2 border border-purple-200 dark:border-purple-800">
             <Wand2 className="w-3.5 h-3.5" /> Fábrica Mágica de Sílabas
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-800">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100">
             Junte a Consoante com a Vogal
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Escolha uma letra azul e uma amarela para ouvir a mágica do som!
           </p>
         </div>
@@ -201,7 +201,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
               {formatCase(consonant, letterCase)}
             </motion.div>
 
-            <span className="text-xl sm:text-3xl font-bold text-slate-400">+</span>
+            <span className="text-xl sm:text-3xl font-bold text-slate-400 dark:text-slate-600">+</span>
 
             {/* Vowel pill */}
             <motion.div
@@ -213,7 +213,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
               {formatCase(vowel, letterCase)}
             </motion.div>
 
-            <span className="text-xl sm:text-3xl font-bold text-slate-400">=</span>
+            <span className="text-xl sm:text-3xl font-bold text-slate-400 dark:text-slate-600">=</span>
 
             {/* Combined Syllable result */}
             <motion.button
@@ -223,7 +223,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
               whileTap={{ scale: 0.95 }}
               type="button"
               onClick={handleSpeakSyllable}
-              className="min-w-[76px] sm:min-w-[110px] h-16 sm:h-24 px-3 sm:px-4 rounded-2xl sm:rounded-3xl bg-purple-600 hover:bg-purple-700 text-white font-black text-3xl sm:text-5xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-purple-200 border-b-3 sm:border-b-4 border-purple-900 cursor-pointer transition-transform"
+              className="min-w-[76px] sm:min-w-[110px] h-16 sm:h-24 px-3 sm:px-4 rounded-2xl sm:rounded-3xl bg-purple-600 hover:bg-purple-700 text-white font-black text-3xl sm:text-5xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-purple-200 dark:shadow-none border-b-3 sm:border-b-4 border-purple-900 cursor-pointer transition-transform"
               title="Clique para ouvir"
             >
               <span>{formatCase(currentSyllable, letterCase)}</span>
@@ -236,14 +236,14 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl bg-purple-50 border border-purple-200 text-purple-900 text-xs sm:text-sm font-bold mt-1 sm:mt-2"
+              className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200 text-xs sm:text-sm font-bold mt-1 sm:mt-2"
             >
               <span className="text-xl sm:text-2xl">{example.emoji}</span>
               <span>Como em: {formatCase(example.word, letterCase)}</span>
               <button
                 type="button"
                 onClick={() => soundEngine.speakText(example.word, speechRate)}
-                className="p-1 rounded-lg hover:bg-purple-200 text-purple-700 cursor-pointer"
+                className="p-1 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900 text-purple-700 dark:text-purple-300 cursor-pointer"
                 title={`Ouvir ${example.word}`}
               >
                 <Volume2 className="w-3.5 h-3.5" />
@@ -264,7 +264,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
 
         {/* Consonant Selector Grid */}
         <div className="mt-4 sm:mt-6">
-          <div className="text-2xs sm:text-xs font-bold text-blue-800 uppercase tracking-wider mb-2">
+          <div className="text-2xs sm:text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider mb-2">
             1. Escolha a Consoante:
           </div>
           <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
@@ -276,7 +276,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
                 className={`w-9 h-10 sm:w-12 sm:h-13 rounded-lg sm:rounded-xl font-black text-base sm:text-xl flex items-center justify-center transition-all cursor-pointer ${
                   consonant === c
                     ? 'bg-blue-600 text-white shadow-md scale-105 border-b-2 sm:border-b-3 border-blue-900'
-                    : 'bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200'
+                    : 'bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 text-blue-900 dark:text-blue-300 border border-blue-200 dark:border-slate-700'
                 }`}
               >
                 {formatCase(c, letterCase)}
@@ -287,7 +287,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
 
         {/* Vowel Selector Grid */}
         <div className="mt-5">
-          <div className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">
+          <div className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-2">
             2. Escolha a Vogal:
           </div>
           <div className="flex flex-wrap gap-2.5 justify-center">
@@ -299,7 +299,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
                 className={`w-12 h-13 sm:w-14 sm:h-14 rounded-2xl font-black text-2xl flex items-center justify-center transition-all cursor-pointer ${
                   vowel === v
                     ? 'bg-amber-500 text-white shadow-md scale-105 border-b-3 border-amber-800'
-                    : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200'
+                    : 'bg-amber-50 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-slate-700'
                 }`}
               >
                 {formatCase(v, letterCase)}
@@ -310,16 +310,16 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
       </div>
 
       {/* Free Word Builder Belt */}
-      <div className="bg-slate-50 rounded-3xl border-2 border-slate-200 p-5 sm:p-6 text-center">
+      <div className="bg-slate-50 dark:bg-slate-900/90 rounded-3xl border-2 border-slate-200 dark:border-slate-800 p-5 sm:p-6 text-center transition-colors">
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-xs font-bold text-slate-700 uppercase tracking-wide">
+          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
             Crie suas palavras com as sílabas guardadas:
           </span>
           {wordChain.length > 0 && (
             <button
               type="button"
               onClick={handleClearChain}
-              className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 flex items-center gap-1 cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Limpar</span>
@@ -327,16 +327,16 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-2 min-h-[64px] bg-white p-3 rounded-2xl border border-slate-200">
+        <div className="flex items-center justify-center gap-2 min-h-[64px] bg-white dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700">
           {wordChain.length === 0 ? (
-            <span className="text-sm text-slate-400 font-medium italic">
+            <span className="text-sm text-slate-400 dark:text-slate-500 font-medium italic">
               Nenhuma sílaba guardada. Clique no botão verde acima para adicionar!
             </span>
           ) : (
             wordChain.map((syl, i) => (
               <div
                 key={`${syl}-${i}`}
-                className="px-4 py-2 rounded-xl bg-purple-100 text-purple-900 font-extrabold text-xl sm:text-2xl border-2 border-purple-300"
+                className="px-4 py-2 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-900 dark:text-purple-200 font-extrabold text-xl sm:text-2xl border-2 border-purple-300 dark:border-purple-800"
               >
                 {formatCase(syl, letterCase)}
               </div>

@@ -278,8 +278,8 @@ export default function App() {
     });
   };
 
-  const handleSelectProfile = (profileId: string) => {
-    const target = profiles.find(p => p.id === profileId);
+  const handleSelectProfile = (profileId: string, explicitProfile?: UserProfile) => {
+    const target = explicitProfile || profiles.find(p => p.id === profileId);
     if (!target) return;
 
     setActiveProfileId(profileId);
@@ -349,7 +349,7 @@ export default function App() {
       return updated;
     });
 
-    handleSelectProfile(newProfile.id);
+    handleSelectProfile(newProfile.id, newProfile);
     try {
       confetti({
         particleCount: 50,
@@ -375,20 +375,18 @@ export default function App() {
   };
 
   const handleDeleteProfile = (profileId: string) => {
-    setProfiles(prev => {
-      const remaining = prev.filter(p => p.id !== profileId);
-      if (remaining.length === 0) return prev;
-      try {
-        localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(remaining));
-      } catch {
-        // ignore
-      }
+    if (profiles.length <= 1) return;
+    const remaining = profiles.filter(p => p.id !== profileId);
+    setProfiles(remaining);
+    try {
+      localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(remaining));
+    } catch {
+      // ignore
+    }
 
-      if (activeProfileId === profileId) {
-        handleSelectProfile(remaining[0].id);
-      }
-      return remaining;
-    });
+    if (activeProfileId === profileId && remaining.length > 0) {
+      handleSelectProfile(remaining[0].id, remaining[0]);
+    }
   };
 
   // Active daily study time tracking (increments when tab is active)
@@ -405,13 +403,6 @@ export default function App() {
             practicedSyllables: isSameDay ? prev.practicedSyllables : {},
             totalActivitiesDone: isSameDay ? prev.totalActivitiesDone : 0,
           };
-          if (nextSec % 10 === 0) {
-            try {
-              localStorage.setItem(STORAGE_KEY_DAILY_STATS, JSON.stringify(updated));
-            } catch {
-              // ignore
-            }
-          }
           return updated;
         });
       }
@@ -435,11 +426,6 @@ export default function App() {
         practicedSyllables: updatedSyllables,
         totalActivitiesDone: prev.totalActivitiesDone + 1,
       };
-      try {
-        localStorage.setItem(STORAGE_KEY_DAILY_STATS, JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
       return updated;
     });
   };
@@ -851,6 +837,7 @@ export default function App() {
                   totalStars={progress.stars}
                   onOpenRoutine={() => setIsRoutineOpen(true)}
                   onSelectMode={setCurrentMode}
+                  activeProfileName={activeProfile.name}
                 />
               </motion.div>
             )}

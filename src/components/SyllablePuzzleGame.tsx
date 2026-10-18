@@ -134,7 +134,12 @@ export const SyllablePuzzleGame: React.FC<SyllablePuzzleGameProps> = ({
           'Quase lá! Ouça o som da palavra de novo e tente colocar os pedacinhos na ordem certa.',
           currentWord.hint
         );
-        setTimeout(() => setIsShaking(false), 600);
+        setTimeout(() => {
+          setIsShaking(false);
+          // Auto-return misplaced syllables back to available pool so the child can try again effortlessly!
+          setSelectedSyllables([]);
+          setShuffledSyllables([...newSelected].sort(() => Math.random() - 0.5));
+        }, 750);
       }
     }
   };
@@ -272,7 +277,11 @@ export const SyllablePuzzleGame: React.FC<SyllablePuzzleGameProps> = ({
           <motion.div
             animate={isShaking ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
             transition={{ duration: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 min-h-[60px] sm:min-h-[84px] p-2 sm:p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border-2 border-dashed border-slate-300 dark:border-slate-700 w-full max-w-md"
+            className={`flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 min-h-[60px] sm:min-h-[84px] p-2 sm:p-3 rounded-2xl ${
+              isShaking
+                ? 'bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-400 dark:border-rose-600'
+                : 'bg-slate-50 dark:bg-slate-800/80 border-2 border-dashed border-slate-300 dark:border-slate-700'
+            } w-full max-w-md transition-colors`}
           >
             {currentWord.syllables.map((_, index) => {
               const selectedSyl = selectedSyllables[index];
