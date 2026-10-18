@@ -154,3 +154,20 @@ export interface TrailProgress {
   unlockedAllForTesting: boolean;
 }
 
+export interface UserProfile {
+  id: string;
+  name: string;
+  avatar: string; // Emoji character e.g. '🦁', '🦉', '🦊', '🦄', '🦖', '🐼'
+  avatarBg: string; // Tailwind gradient CSS class
+  levelTitle: string; // e.g. "Explorador da Leitura", "Detetive de Sílabas"
+  ageGroup?: string; // e.g. "4-5 anos", "6-7 anos", "8+ anos"
+  streakDays: number; // Duolingo-style streak flame 🔥
+  lastActiveDate: string; // YYYY-MM-DD
+  createdAt: string;
+  progress: UserProgress;
+  trailProgress: TrailProgress;
+  dailyStats: DailyStudyStats;
+  badges: Badge[];
+}
+
+

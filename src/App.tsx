@@ -14,6 +14,7 @@ import { PhoneticDuelGame } from './components/PhoneticDuelGame';
 import { BadgesModal } from './components/BadgesModal';
 import { SettingsModal } from './components/SettingsModal';
 import { StudyScheduleModal } from './components/StudyScheduleModal';
+import { ProfileModal } from './components/ProfileModal';
 import {
   SYLLABLE_WORDS,
   SOUND_QUESTIONS,
@@ -32,20 +33,137 @@ import {
   DailyStudyStats,
   TrailMission,
   TrailProgress,
+  UserProfile,
 } from './types';
 import { soundEngine } from './utils/audio';
 
-const STORAGE_KEY_PROGRESS = 'alfabetizacao_progress_v1';
+const STORAGE_KEY_PROFILES = 'alfabetizacao_profiles_v2';
+const STORAGE_KEY_ACTIVE_PROFILE_ID = 'alfabetizacao_active_profile_id_v2';
 const STORAGE_KEY_SETTINGS = 'alfabetizacao_settings_v1';
-const STORAGE_KEY_BADGES = 'alfabetizacao_badges_v1';
 const STORAGE_KEY_DAILY_STATS = 'alfabetizacao_daily_stats_v1';
 const STORAGE_KEY_TRAIL = 'alfabetizacao_trail_v1';
 
 const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
 
+const createDefaultProfiles = (
+  legacyProgress?: UserProgress | null,
+  legacyTrail?: TrailProgress | null,
+  legacyStats?: DailyStudyStats | null,
+  legacyBadges?: Badge[] | null
+): UserProfile[] => {
+  const today = getTodayDateKey();
+  return [
+    {
+      id: 'profile_sofia',
+      name: 'Sofia',
+      avatar: '🦁',
+      avatarBg: 'from-amber-400 to-orange-500',
+      levelTitle: 'Exploradora da Leitura',
+      ageGroup: '5 a 6 anos',
+      streakDays: 3,
+      lastActiveDate: today,
+      createdAt: new Date().toISOString(),
+      progress: legacyProgress || {
+        stars: 18,
+        completedWordsCount: 4,
+        consecutiveCorrect: 3,
+        bestStreak: 4,
+        unlockedStickers: ['🌟', '🐱', '🦋'],
+        level: 2,
+      },
+      trailProgress: legacyTrail || {
+        completedMissionIds: ['m1_vogais', 'm2_ba_be_bi'],
+        currentMissionId: 'm3_palavras_bola',
+        unlockedAllForTesting: false,
+      },
+      dailyStats: legacyStats || {
+        date: today,
+        totalStudySeconds: 240,
+        practicedSyllables: { BO: 4, LA: 4, CA: 3, SA: 3 },
+        totalActivitiesDone: 4,
+      },
+      badges: legacyBadges || INITIAL_BADGES,
+    },
+    {
+      id: 'profile_miguel',
+      name: 'Miguel',
+      avatar: '🦉',
+      avatarBg: 'from-blue-400 to-indigo-500',
+      levelTitle: 'Detetive de Sílabas',
+      ageGroup: '6 a 7 anos',
+      streakDays: 1,
+      lastActiveDate: today,
+      createdAt: new Date().toISOString(),
+      progress: {
+        stars: 8,
+        completedWordsCount: 2,
+        consecutiveCorrect: 2,
+        bestStreak: 2,
+        unlockedStickers: ['🌟'],
+        level: 1,
+      },
+      trailProgress: {
+        completedMissionIds: ['m1_vogais'],
+        currentMissionId: 'm2_ba_be_bi',
+        unlockedAllForTesting: false,
+      },
+      dailyStats: {
+        date: today,
+        totalStudySeconds: 120,
+        practicedSyllables: { BA: 3, BE: 3 },
+        totalActivitiesDone: 2,
+      },
+      badges: INITIAL_BADGES,
+    },
+  ];
+};
+
+const loadInitialProfilesData = (): { profiles: UserProfile[]; activeId: string } => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_PROFILES);
+    const savedActiveId = localStorage.getItem(STORAGE_KEY_ACTIVE_PROFILE_ID);
+    if (saved) {
+      const parsed: UserProfile[] = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const active = parsed.find(p => p.id === savedActiveId) || parsed[0];
+        return { profiles: parsed, activeId: active.id };
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // Legacy single profile recovery
+  let legacyProgress: UserProgress | null = null;
+  let legacyTrail: TrailProgress | null = null;
+  let legacyStats: DailyStudyStats | null = null;
+  let legacyBadges: Badge[] | null = null;
+  try {
+    const lp = localStorage.getItem('alfabetizacao_progress_v1');
+    if (lp) legacyProgress = JSON.parse(lp);
+    const lt = localStorage.getItem('alfabetizacao_trail_v1');
+    if (lt) legacyTrail = JSON.parse(lt);
+    const ls = localStorage.getItem('alfabetizacao_daily_stats_v1');
+    if (ls) legacyStats = JSON.parse(ls);
+    const lb = localStorage.getItem('alfabetizacao_badges_v1');
+    if (lb) legacyBadges = JSON.parse(lb);
+  } catch {}
+
+  const defaults = createDefaultProfiles(legacyProgress, legacyTrail, legacyStats, legacyBadges);
+  return { profiles: defaults, activeId: defaults[0].id };
+};
+
 export default function App() {
   // Game Mode: Defaults to the guided pedagogical trail!
   const [currentMode, setCurrentMode] = useState<GameMode>('trail');
+
+  // Duolingo-style Child Profiles state
+  const [initialData] = useState(loadInitialProfilesData);
+  const [profiles, setProfiles] = useState<UserProfile[]>(initialData.profiles);
+  const [activeProfileId, setActiveProfileId] = useState<string>(initialData.activeId);
+  const [isProfilesOpen, setIsProfilesOpen] = useState(false);
+
+  const activeProfile = profiles.find(p => p.id === activeProfileId) || profiles[0];
 
   // Active mission when playing directly from the trail
   const [activeTrailMission, setActiveTrailMission] = useState<TrailMission | null>(null);
@@ -56,77 +174,17 @@ export default function App() {
     nextMission?: TrailMission;
   } | null>(null);
 
-  // Trail Progress state
-  const [trailProgress, setTrailProgress] = useState<TrailProgress>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_TRAIL);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return {
-      completedMissionIds: [],
-      currentMissionId: TRAIL_MISSIONS[0].id,
-      unlockedAllForTesting: false,
-    };
-  });
+  // Active child's Trail Progress state
+  const [trailProgress, setTrailProgress] = useState<TrailProgress>(activeProfile.trailProgress);
 
-  // User Progress state with LocalStorage recovery
-  const [progress, setProgress] = useState<UserProgress>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_PROGRESS);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return {
-      stars: 5, // initial friendly gift
-      completedWordsCount: 0,
-      consecutiveCorrect: 0,
-      bestStreak: 0,
-      unlockedStickers: [],
-      level: 1,
-    };
-  });
+  // Active child's User Progress state
+  const [progress, setProgress] = useState<UserProgress>(activeProfile.progress);
 
-  // Daily Study Stats for parents tracking
-  const [dailyStats, setDailyStats] = useState<DailyStudyStats>(() => {
-    const today = getTodayDateKey();
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_DAILY_STATS);
-      if (saved) {
-        const parsed: DailyStudyStats = JSON.parse(saved);
-        if (parsed.date === today) {
-          return parsed;
-        }
-      }
-    } catch {
-      // ignore
-    }
-    return {
-      date: today,
-      totalStudySeconds: 180, // 3 minutes baseline for positive initial display
-      practicedSyllables: {
-        BO: 4,
-        LA: 4,
-        CA: 3,
-        SA: 3,
-        PA: 2,
-      },
-      totalActivitiesDone: 3,
-    };
-  });
+  // Active child's Daily Study Stats
+  const [dailyStats, setDailyStats] = useState<DailyStudyStats>(activeProfile.dailyStats);
 
-  // Badges state
-  const [badges, setBadges] = useState<Badge[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_BADGES);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return INITIAL_BADGES;
-  });
+  // Active child's Badges state
+  const [badges, setBadges] = useState<Badge[]>(activeProfile.badges);
 
   // Accessibility and pedagogical settings
   const [settings, setSettings] = useState<AppSettings>(() => {
@@ -163,22 +221,29 @@ export default function App() {
     document.documentElement.classList.toggle('dark', Boolean(settings.darkMode));
   }, [settings.darkMode]);
 
-  // Sync to localStorage
+  // Sync active profile progress to profiles array and localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify(progress));
-    } catch {
-      // ignore
-    }
-  }, [progress]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_BADGES, JSON.stringify(badges));
-    } catch {
-      // ignore
-    }
-  }, [badges]);
+    setProfiles(prevProfiles => {
+      const updated = prevProfiles.map(p => {
+        if (p.id === activeProfileId) {
+          return {
+            ...p,
+            progress,
+            trailProgress,
+            dailyStats,
+            badges,
+          };
+        }
+        return p;
+      });
+      try {
+        localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  }, [progress, trailProgress, dailyStats, badges, activeProfileId]);
 
   useEffect(() => {
     try {
@@ -187,6 +252,144 @@ export default function App() {
       // ignore
     }
   }, [settings]);
+
+  // Duolingo streak daily check and incrementer
+  const bumpDailyStreak = () => {
+    const today = getTodayDateKey();
+    setProfiles(prev => {
+      const updated = prev.map(p => {
+        if (p.id === activeProfileId) {
+          if (p.lastActiveDate !== today) {
+            return {
+              ...p,
+              streakDays: (p.streakDays || 1) + 1,
+              lastActiveDate: today,
+            };
+          }
+        }
+        return p;
+      });
+      try {
+        localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
+  const handleSelectProfile = (profileId: string) => {
+    const target = profiles.find(p => p.id === profileId);
+    if (!target) return;
+
+    setActiveProfileId(profileId);
+    setProgress(target.progress);
+    setTrailProgress(target.trailProgress);
+    setDailyStats(target.dailyStats);
+    setBadges(target.badges);
+    try {
+      localStorage.setItem(STORAGE_KEY_ACTIVE_PROFILE_ID, profileId);
+    } catch {
+      // ignore
+    }
+
+    soundEngine.playSuccessChime();
+    setMascotMood('celebrating');
+    const greeting = `Olá, ${target.name}! Que bom te ver aqui! Vamos manter sua ofensiva de ${target.streakDays || 1} dias no Alfabetização Divertida!`;
+    setMascotMessage(greeting);
+    if (settings.voiceEnabled) {
+      soundEngine.speakText(greeting, {
+        emotion: 'celebrating',
+        playMascotChirp: true,
+        rate: settings.speechRate,
+      });
+    }
+    setIsProfilesOpen(false);
+  };
+
+  const handleCreateProfile = (
+    newProfileData: Omit<UserProfile, 'id' | 'createdAt' | 'progress' | 'trailProgress' | 'dailyStats' | 'badges'>
+  ) => {
+    const today = getTodayDateKey();
+    const newProfile: UserProfile = {
+      ...newProfileData,
+      id: `profile_${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      streakDays: 1,
+      lastActiveDate: today,
+      progress: {
+        stars: 5,
+        completedWordsCount: 0,
+        consecutiveCorrect: 0,
+        bestStreak: 0,
+        unlockedStickers: [],
+        level: 1,
+      },
+      trailProgress: {
+        completedMissionIds: [],
+        currentMissionId: TRAIL_MISSIONS[0].id,
+        unlockedAllForTesting: false,
+      },
+      dailyStats: {
+        date: today,
+        totalStudySeconds: 0,
+        practicedSyllables: {},
+        totalActivitiesDone: 0,
+      },
+      badges: INITIAL_BADGES,
+    };
+
+    setProfiles(prev => {
+      const updated = [...prev, newProfile];
+      try {
+        localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+
+    handleSelectProfile(newProfile.id);
+    try {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.65 },
+        colors: ['#F59E0B', '#10B981', '#3B82F6', '#EC4899', '#8B5CF6'],
+      });
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleUpdateProfile = (profileId: string, updates: Partial<UserProfile>) => {
+    setProfiles(prev => {
+      const updated = prev.map(p => (p.id === profileId ? { ...p, ...updates } : p));
+      try {
+        localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
+  const handleDeleteProfile = (profileId: string) => {
+    setProfiles(prev => {
+      const remaining = prev.filter(p => p.id !== profileId);
+      if (remaining.length === 0) return prev;
+      try {
+        localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(remaining));
+      } catch {
+        // ignore
+      }
+
+      if (activeProfileId === profileId) {
+        handleSelectProfile(remaining[0].id);
+      }
+      return remaining;
+    });
+  };
 
   // Active daily study time tracking (increments when tab is active)
   useEffect(() => {
@@ -354,6 +557,7 @@ export default function App() {
 
   // Gamification rewards for Syllables game
   const handleSuccessWord = (word: SyllableWord) => {
+    bumpDailyStreak();
     recordPracticedSyllables(word.syllables);
     setProgress(prev => {
       const nextCount = prev.completedWordsCount + 1;
@@ -377,6 +581,7 @@ export default function App() {
 
   // Rewards for Sounds game
   const handleSuccessSoundQuestion = (syllable?: string) => {
+    bumpDailyStreak();
     if (syllable) {
       recordPracticedSyllables([syllable]);
     } else {
@@ -402,6 +607,7 @@ export default function App() {
 
   // Rewards for Rhymes game
   const handleSuccessRhymeQuestion = () => {
+    bumpDailyStreak();
     setDailyStats(prev => ({
       ...prev,
       totalActivitiesDone: prev.totalActivitiesDone + 1,
@@ -423,6 +629,7 @@ export default function App() {
 
   // Rewards for Story reading
   const handleStoryCompleted = () => {
+    bumpDailyStreak();
     setDailyStats(prev => ({
       ...prev,
       totalActivitiesDone: prev.totalActivitiesDone + 1,
@@ -444,6 +651,7 @@ export default function App() {
 
   // Rewards for Duel round
   const handleSuccessDuelRound = (bonusStars: number, initialSound?: string) => {
+    bumpDailyStreak();
     if (initialSound) {
       recordPracticedSyllables([initialSound]);
     } else {
@@ -538,6 +746,8 @@ export default function App() {
         onOpenRoutine={() => setIsRoutineOpen(true)}
         darkMode={settings.darkMode}
         onToggleDarkMode={handleToggleDarkMode}
+        activeProfile={activeProfile}
+        onOpenProfiles={() => setIsProfilesOpen(true)}
       />
 
       {/* Main Educational Workspace */}
@@ -860,6 +1070,14 @@ export default function App() {
           <div className="flex items-center gap-3">
             <button
               type="button"
+              onClick={() => setIsProfilesOpen(true)}
+              className="text-amber-800 dark:text-amber-400 hover:underline cursor-pointer font-bold flex items-center gap-1"
+            >
+              <span>Perfis de Alunos ({profiles.length})</span>
+            </button>
+            <span>•</span>
+            <button
+              type="button"
               onClick={() => setIsRoutineOpen(true)}
               className="text-amber-800 dark:text-amber-400 hover:underline cursor-pointer font-medium flex items-center gap-1"
             >
@@ -913,6 +1131,19 @@ export default function App() {
         onSelectMode={setCurrentMode}
         dailyStats={dailyStats}
         totalStars={progress.stars}
+        darkMode={settings.darkMode}
+      />
+
+      {/* Duolingo-style Child Profiles Modal */}
+      <ProfileModal
+        isOpen={isProfilesOpen}
+        onClose={() => setIsProfilesOpen(false)}
+        profiles={profiles}
+        activeProfileId={activeProfileId}
+        onSelectProfile={handleSelectProfile}
+        onCreateProfile={handleCreateProfile}
+        onUpdateProfile={handleUpdateProfile}
+        onDeleteProfile={handleDeleteProfile}
         darkMode={settings.darkMode}
       />
     </div>

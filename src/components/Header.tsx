@@ -16,8 +16,9 @@ import {
   Map,
   Calendar,
   Star,
+  Flame,
 } from 'lucide-react';
-import { GameMode, LetterCase, UserProgress } from '../types';
+import { GameMode, LetterCase, UserProgress, UserProfile } from '../types';
 import { soundEngine } from '../utils/audio';
 
 interface HeaderProps {
@@ -31,6 +32,8 @@ interface HeaderProps {
   onOpenRoutine: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
+  activeProfile?: UserProfile;
+  onOpenProfiles: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -44,6 +47,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenRoutine,
   darkMode,
   onToggleDarkMode,
+  activeProfile,
+  onOpenProfiles,
 }) => {
   const modes: { id: GameMode; label: string; icon: React.ReactNode; color: string }[] = [
     {
@@ -137,6 +142,36 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Gamification stats & quick toggles */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Duolingo Profile & Streak Flame Chip */}
+            {activeProfile && (
+              <button
+                type="button"
+                onClick={() => {
+                  soundEngine.playPop();
+                  onOpenProfiles();
+                }}
+                className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-2xs hover:scale-102 active:scale-98 ${
+                  darkMode
+                    ? 'bg-[#182234] hover:bg-slate-800 border-amber-500/40 text-slate-100'
+                    : 'bg-gradient-to-r from-amber-50 to-orange-50 hover:bg-amber-100 border-amber-300 text-slate-800'
+                }`}
+                title={`Perfil de ${activeProfile.name} • Toque para trocar de criança`}
+              >
+                <div
+                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg sm:rounded-xl bg-gradient-to-tr ${activeProfile.avatarBg} flex items-center justify-center text-xs sm:text-sm select-none shrink-0 shadow-2xs`}
+                >
+                  {activeProfile.avatar}
+                </div>
+                <span className="text-xs font-black truncate max-w-[65px] sm:max-w-[100px] hidden xs:inline">
+                  {activeProfile.name}
+                </span>
+                <div className="flex items-center gap-0.5 text-xs font-black text-orange-500">
+                  <Flame className="w-3.5 h-3.5 fill-orange-500 text-orange-500 animate-pulse" />
+                  <span>{activeProfile.streakDays || 1}</span>
+                </div>
+              </button>
+            )}
+
             {/* Stars counter */}
             <motion.div
               key={progress.stars}
