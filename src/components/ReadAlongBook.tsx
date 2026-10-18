@@ -138,22 +138,22 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
       </div>
 
       {/* Main Book Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border-3 border-amber-200 dark:border-slate-800 shadow-md p-6 sm:p-10 relative overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border-2 sm:border-3 border-amber-200 dark:border-slate-800 shadow-md p-4 sm:p-10 relative overflow-hidden">
         {/* Story Illustration Header */}
-        <div className="flex flex-col items-center justify-center mb-6">
-          <div className="text-7xl sm:text-8xl my-2 select-none animate-bounce">
+        <div className="flex flex-col items-center justify-center mb-4 sm:mb-6">
+          <div className="text-5xl sm:text-8xl my-1 sm:my-2 select-none animate-bounce">
             {story.illustration}
           </div>
-          <h3 className="text-xl sm:text-2xl font-black text-amber-900 dark:text-amber-300 tracking-wide mt-2">
+          <h3 className="text-lg sm:text-2xl font-black text-amber-900 dark:text-amber-300 tracking-wide mt-1 sm:mt-2">
             {formatCase(story.title, letterCase)}
           </h3>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+          <p className="text-2xs sm:text-xs text-slate-400 dark:text-slate-500 mt-0.5 sm:mt-1">
             Toque em qualquer palavra para ver e ouvir as sílabas
           </p>
         </div>
 
         {/* Story Text with Word Highlighting */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 my-6 p-4 sm:p-6 bg-amber-50/60 dark:bg-slate-800/80 rounded-2xl border-2 border-amber-100 dark:border-slate-700 min-h-[100px]">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3.5 my-4 sm:my-6 p-3 sm:p-6 bg-amber-50/60 dark:bg-slate-800/80 rounded-xl sm:rounded-2xl border-2 border-amber-100 dark:border-slate-700 min-h-[80px] sm:min-h-[100px]">
           {story.words.map((w, index) => {
             const isActive = activeWordIndex === index;
             const isExpanded = expandedWordIdx === index;
@@ -163,9 +163,9 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
                 <button
                   type="button"
                   onClick={() => handleClickWord(index)}
-                  className={`px-3 sm:px-4 py-2 sm:py-3 rounded-2xl font-black text-2xl sm:text-3xl transition-all cursor-pointer select-none ${
+                  className={`px-2.5 sm:px-4 py-1.5 sm:py-3 rounded-xl sm:rounded-2xl font-black text-xl sm:text-3xl transition-all cursor-pointer select-none ${
                     isActive
-                      ? 'bg-amber-400 text-amber-950 scale-110 shadow-md ring-4 ring-amber-300'
+                      ? 'bg-amber-400 text-amber-950 scale-105 sm:scale-110 shadow-md ring-3 sm:ring-4 ring-amber-300'
                       : 'bg-white dark:bg-slate-850 hover:bg-amber-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-200 dark:border-slate-700 hover:border-amber-300 shadow-xs'
                   }`}
                 >
@@ -177,7 +177,7 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="flex gap-1 mt-2 p-1 bg-white dark:bg-slate-900 rounded-xl border border-amber-300 dark:border-slate-700 shadow-xs"
+                    className="flex gap-1 mt-1 sm:mt-2 p-1 bg-white dark:bg-slate-900 rounded-xl border border-amber-300 dark:border-slate-700 shadow-xs"
                   >
                     {w.syllables.map((syl, sIdx) => {
                       const col = getSyllableColor(sIdx);
@@ -204,11 +204,11 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
         </div>
 
         {/* Controls Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800">
           <button
             type="button"
             onClick={handleReadFullStory}
-            className={`px-6 sm:px-8 py-3.5 rounded-2xl font-black text-base sm:text-lg flex items-center gap-2.5 shadow-md border-b-4 active:border-b-0 active:translate-y-1 transition-all cursor-pointer ${
+            className={`w-full sm:w-auto px-5 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-black text-sm sm:text-lg flex items-center justify-center gap-2 sm:gap-2.5 shadow-md border-b-3 sm:border-b-4 active:border-b-0 active:translate-y-1 transition-all cursor-pointer ${
               isPlaying
                 ? 'bg-rose-500 hover:bg-rose-600 text-white border-rose-700'
                 : 'bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-700 shadow-emerald-200'
@@ -216,12 +216,12 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
           >
             {isPlaying ? (
               <>
-                <Pause className="w-6 h-6" />
+                <Pause className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span>Pausar Leitura</span>
               </>
             ) : (
               <>
-                <Play className="w-6 h-6" />
+                <Play className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span>Ler Comigo (Voz e Destaque)</span>
               </>
             )}

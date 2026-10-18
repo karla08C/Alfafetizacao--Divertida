@@ -133,38 +133,38 @@ export const InitialSoundGame: React.FC<InitialSoundGameProps> = ({
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
       {/* Question Card */}
-      <div className="w-full bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-8 text-center relative">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 mb-4">
-          <span className="px-3 py-1 bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 rounded-full flex items-center gap-1.5 border border-sky-200 dark:border-sky-800">
-            <Search className="w-3.5 h-3.5" />
+      <div className="w-full bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm p-3.5 sm:p-8 text-center relative">
+        <div className="flex items-center justify-between text-2xs sm:text-xs font-bold text-slate-500 dark:text-slate-400 mb-3 sm:mb-4">
+          <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 rounded-full flex items-center gap-1 border border-sky-200 dark:border-sky-800">
+            <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             <span>Consciência Fonológica</span>
           </span>
-          <span>Desafio {questionIndex + 1} de {questions.length}</span>
+          <span>Desafio {questionIndex + 1}/{questions.length}</span>
         </div>
 
-        <div className="my-3">
-          <div className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium mb-2">
+        <div className="my-2 sm:my-3">
+          <div className="text-xs sm:text-base text-slate-600 dark:text-slate-300 font-medium mb-1.5 sm:mb-2">
             Qual dessas palavras começa com o pedacinho:
           </div>
 
           {/* Syllable sound badge */}
-          <div className="inline-flex items-center gap-3 bg-sky-50 dark:bg-sky-950/40 border-3 border-sky-400 dark:border-sky-600 px-6 py-3 rounded-2xl shadow-inner mb-4">
-            <span className="text-4xl sm:text-5xl font-black text-sky-700 dark:text-sky-300 tracking-wider">
+          <div className="inline-flex items-center gap-2 sm:gap-3 bg-sky-50 dark:bg-sky-950/40 border-2 sm:border-3 border-sky-400 dark:border-sky-600 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl shadow-inner mb-2 sm:mb-4">
+            <span className="text-3xl sm:text-5xl font-black text-sky-700 dark:text-sky-300 tracking-wider">
               {formatCase(currentQ.promptSyllableOrSound, letterCase)}
             </span>
             <button
               type="button"
               onClick={handleHearPrompt}
-              className="p-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white shadow-xs cursor-pointer active:scale-95 transition-transform"
+              className="p-2 sm:p-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white shadow-xs cursor-pointer active:scale-95 transition-transform"
               title="Ouvir a pergunta"
             >
-              <Volume2 className="w-6 h-6" />
+              <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>
 
         {/* Options grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 mt-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-3 sm:mt-4">
           {currentQ.options.map((opt, idx) => {
             const isSelected = selectedOptionIndex === idx;
             const showSuccess = isAnswered && opt.isCorrect;
@@ -172,7 +172,7 @@ export const InitialSoundGame: React.FC<InitialSoundGameProps> = ({
 
             let cardStyle = 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-slate-700/60';
             if (showSuccess) {
-              cardStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-3 ring-emerald-300 dark:ring-emerald-700';
+              cardStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-2 sm:ring-3 ring-emerald-300 dark:ring-emerald-700';
             } else if (showFail) {
               cardStyle = 'bg-rose-50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 opacity-70';
             }
@@ -191,13 +191,13 @@ export const InitialSoundGame: React.FC<InitialSoundGameProps> = ({
                   }
                 }}
                 onClick={() => handleSelectOption(idx)}
-                className={`p-4 rounded-2xl border-3 ${cardStyle} flex flex-col items-center justify-center gap-2 cursor-pointer transition-all shadow-sm select-none relative group outline-none focus-visible:ring-4 focus-visible:ring-sky-400`}
+                className={`p-2 sm:p-4 rounded-xl sm:rounded-2xl border-2 sm:border-3 ${cardStyle} flex flex-col items-center justify-center gap-1 sm:gap-2 cursor-pointer transition-all shadow-sm select-none relative group outline-none focus-visible:ring-4 focus-visible:ring-sky-400`}
               >
-                <div className="text-5xl sm:text-6xl my-1 group-hover:scale-110 transition-transform">
+                <div className="text-3xl sm:text-6xl my-0.5 sm:my-1 group-hover:scale-110 transition-transform">
                   {opt.emoji}
                 </div>
 
-                <div className="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-slate-100">
+                <div className="text-xs sm:text-xl font-extrabold text-slate-800 dark:text-slate-100 truncate w-full text-center">
                   {formatCase(opt.word, letterCase)}
                 </div>
 
@@ -205,10 +205,10 @@ export const InitialSoundGame: React.FC<InitialSoundGameProps> = ({
                 <button
                   type="button"
                   onClick={(e) => handleHearOption(opt.word, e)}
-                  className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 shadow-xs border border-slate-200 dark:border-slate-600 mt-1 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                  className="p-1 sm:p-1.5 rounded-lg bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 shadow-xs border border-slate-200 dark:border-slate-600 mt-0.5 sm:mt-1 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
                   title={`Ouvir ${opt.word}`}
                 >
-                  <Volume2 className="w-4 h-4" />
+                  <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
 
                 {showSuccess && (

@@ -541,7 +541,7 @@ export default function App() {
       />
 
       {/* Main Educational Workspace */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-5">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-2.5 sm:px-6 py-2.5 sm:py-6 flex flex-col gap-3 sm:gap-5">
         {/* Animated Friendly Mascot Companion */}
         <Mascot
           mood={mascotMood}

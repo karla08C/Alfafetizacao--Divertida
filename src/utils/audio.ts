@@ -132,6 +132,50 @@ class SoundEngine {
   }
 
   /**
+   * Automatic emotion and context detection for dynamic voice delivery
+   */
+  public detectEmotion(text: string): SpeechEmotion {
+    const lower = text.toLowerCase().trim();
+    if (
+      lower.includes('parabéns') ||
+      lower.includes('muito bem') ||
+      lower.includes('incrível') ||
+      lower.includes('ótimo') ||
+      lower.includes('conseguiu') ||
+      lower.includes('oba') ||
+      lower.includes('vitória') ||
+      lower.includes('show') ||
+      lower.endsWith('!')
+    ) {
+      return 'celebrating';
+    }
+    if (
+      lower.includes('?') ||
+      lower.startsWith('qual') ||
+      lower.startsWith('o que') ||
+      lower.startsWith('quem') ||
+      lower.startsWith('quantas') ||
+      lower.startsWith('onde')
+    ) {
+      return 'question';
+    }
+    if (
+      lower.includes('tente') ||
+      lower.includes('quase') ||
+      lower.includes('vamos lá') ||
+      lower.includes('de novo') ||
+      lower.includes('atenção') ||
+      lower.includes('escute')
+    ) {
+      return 'encouraging';
+    }
+    if (lower.length <= 4 && !lower.includes(' ')) {
+      return 'phonetic';
+    }
+    return 'neutral';
+  }
+
+  /**
    * Phonetic helper: Ensures isolated vowels and short letters are clearly pronounced
    * without robotic clipping or English letter names.
    */
@@ -157,7 +201,37 @@ class SoundEngine {
       }
     }
 
-    return text;
+    // Add natural breathing pauses so speech doesn't sound rushed
+    let formatted = text
+      .replace(/([.!?])\s+/g, '$1 , ')
+      .replace(/:\s+/g, ': , ');
+
+    return formatted;
+  }
+
+  // Play a gentle playful chirp when Mascot starts speaking
+  playMascotChirp() {
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+    try {
+      const notes = [659.25, 880]; // E5 to A5
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.05);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.05 + 0.09);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime + idx * 0.05);
+        osc.stop(ctx.currentTime + idx * 0.05 + 0.09);
+      });
+    } catch {
+      // Audio not permitted yet
+    }
   }
 
   // Play a soft playful tap sound when touching syllables/buttons
@@ -293,13 +367,67 @@ class SoundEngine {
   }
 
   /**
-   * Speak a syllable, word, or sentence with natural Portuguese pronunciation.
-   * Pitch is kept natural (1.0) for human-like tone.
+   * Dynamic speech engine: Modulates pitch and rate dynamically according to emotion,
+   * sentence context, and child attention needs.
    */
-  speakText(text: string, rate: number = 0.85, onEnd?: () => void) {
+  speakText(
+    text: string,
+    rateOrOptions: number | SpeakOptions = 0.85,
+    callbackOnEnd?: () => void
+  ) {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      onEnd?.();
+      if (typeof rateOrOptions === 'object') {
+        rateOrOptions.onEnd?.();
+      } else {
+        callbackOnEnd?.();
+      }
       return;
+    }
+
+    const options: SpeakOptions =
+      typeof rateOrOptions === 'number'
+        ? { rate: rateOrOptions, onEnd: callbackOnEnd }
+        : rateOrOptions;
+
+    const baseRate = options.rate ?? 0.85;
+    const emotion = options.emotion || this.detectEmotion(text);
+
+    // Calculate dynamic pitch and cadence variations
+    let dynamicPitch = options.pitch ?? 1.0;
+    let dynamicRate = baseRate;
+
+    switch (emotion) {
+      case 'celebrating':
+      case 'happy':
+        dynamicPitch = 1.12; // Expressive joyful rise
+        dynamicRate = Math.min(1.05, baseRate * 1.08);
+        break;
+      case 'question':
+      case 'thinking':
+        dynamicPitch = 1.05; // Intonational upward inquiry / curious contemplation
+        dynamicRate = Math.max(0.78, baseRate * 0.95);
+        break;
+      case 'encouraging':
+        dynamicPitch = 0.98; // Warm, reassuring tone
+        dynamicRate = Math.max(0.8, baseRate * 0.92);
+        break;
+      case 'phonetic':
+        dynamicPitch = 1.0;
+        dynamicRate = Math.max(0.72, baseRate * 0.88); // Crisp articulation
+        break;
+      case 'story':
+        dynamicPitch = 1.02;
+        dynamicRate = Math.max(0.82, baseRate * 0.96);
+        break;
+      case 'neutral':
+      default:
+        dynamicPitch = 1.0;
+        dynamicRate = baseRate;
+        break;
+    }
+
+    if (options.playMascotChirp) {
+      this.playMascotChirp();
     }
 
     try {
@@ -308,8 +436,8 @@ class SoundEngine {
       const processedText = this.preparePedagogicalText(text);
       const utterance = new SpeechSynthesisUtterance(processedText);
       utterance.lang = 'pt-BR';
-      utterance.rate = rate; // Clear cadence for children
-      utterance.pitch = 1.0; // Natural, human-like voice (removes squeaky robotic pitch)
+      utterance.rate = dynamicRate;
+      utterance.pitch = dynamicPitch;
 
       if (!this.ptVoice) {
         this.initVoice();
@@ -320,22 +448,22 @@ class SoundEngine {
       }
 
       utterance.onend = () => {
-        onEnd?.();
+        options.onEnd?.();
       };
 
       utterance.onerror = () => {
-        onEnd?.();
+        options.onEnd?.();
       };
 
       window.speechSynthesis.speak(utterance);
     } catch {
-      onEnd?.();
+      options.onEnd?.();
     }
   }
 
   /**
-   * Speak syllables one by one with a clear pedagogical pause between them,
-   * then speak the whole blended word! (e.g. "BO... LA... BOLA!")
+   * Speak syllables one by one with a lively, dynamic pedagogical cadence,
+   * with rising excitement as the syllables join together! (e.g. "BO... LA... BOLA!")
    */
   speakSyllablesSlowly(syllables: string[], fullWord: string, rate: number = 0.8) {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
@@ -352,31 +480,55 @@ class SoundEngine {
         currentIndex++;
         const utt = new SpeechSynthesisUtterance(syl);
         utt.lang = 'pt-BR';
-        utt.rate = rate;
-        utt.pitch = 1.0;
+        utt.rate = Math.max(0.72, rate * 0.9);
+        utt.pitch = 0.98; // Solid deliberate syllable tone
         if (this.ptVoice) utt.voice = this.ptVoice;
+
+        utt.onstart = () => {
+          this.playPop();
+        };
+
         utt.onend = () => {
-          setTimeout(speakNext, 350); // Clear pedagogical pause between syllables
+          setTimeout(speakNext, 340); // Clear pedagogical pause between syllables
         };
         utt.onerror = () => {
-          setTimeout(speakNext, 200);
+          setTimeout(speakNext, 180);
         };
         window.speechSynthesis.speak(utt);
       } else {
-        // Speak the blended full word at the end
+        // Speak the blended full word with vibrant celebratory inflection!
         setTimeout(() => {
+          this.playStarDing();
           const fullUtt = new SpeechSynthesisUtterance(fullWord);
           fullUtt.lang = 'pt-BR';
-          fullUtt.rate = Math.min(1.0, rate * 1.08);
-          fullUtt.pitch = 1.02;
+          fullUtt.rate = Math.min(1.05, rate * 1.1);
+          fullUtt.pitch = 1.1; // Triumphant joined word pitch
           if (this.ptVoice) fullUtt.voice = this.ptVoice;
           window.speechSynthesis.speak(fullUtt);
-        }, 250);
+        }, 220);
       }
     };
 
     speakNext();
   }
+}
+
+export type SpeechEmotion =
+  | 'neutral'
+  | 'celebrating'
+  | 'happy'
+  | 'thinking'
+  | 'question'
+  | 'encouraging'
+  | 'story'
+  | 'phonetic';
+
+export interface SpeakOptions {
+  rate?: number;
+  pitch?: number;
+  emotion?: SpeechEmotion;
+  playMascotChirp?: boolean;
+  onEnd?: () => void;
 }
 
 export const soundEngine = new SoundEngine();

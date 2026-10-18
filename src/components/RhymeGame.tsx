@@ -127,43 +127,43 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
-      <div className="w-full bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-8 text-center relative">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 mb-4">
-          <span className="px-3 py-1 bg-pink-100 dark:bg-pink-950/60 text-pink-800 dark:text-pink-300 rounded-full flex items-center gap-1.5 border border-pink-200 dark:border-pink-800">
-            <Music2 className="w-3.5 h-3.5" /> Caça-Rimas Musical
+      <div className="w-full bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm p-3.5 sm:p-8 text-center relative">
+        <div className="flex items-center justify-between text-2xs sm:text-xs font-bold text-slate-500 dark:text-slate-400 mb-3 sm:mb-4">
+          <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-pink-100 dark:bg-pink-950/60 text-pink-800 dark:text-pink-300 rounded-full flex items-center gap-1 border border-pink-200 dark:border-pink-800">
+            <Music2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Caça-Rimas Musical
           </span>
-          <span>Desafio {index + 1} de {questions.length}</span>
+          <span>Desafio {index + 1}/{questions.length}</span>
         </div>
 
         {/* Target Word Display */}
-        <div className="flex flex-col items-center my-3">
-          <div className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+        <div className="flex flex-col items-center my-2 sm:my-3">
+          <div className="text-2xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5 sm:mb-2">
             Qual dessas palavras rima com:
           </div>
 
-          <div className="flex items-center gap-3 bg-pink-50 dark:bg-pink-950/40 border-3 border-pink-300 dark:border-pink-800 p-4 sm:px-6 sm:py-4 rounded-3xl shadow-sm">
-            <span className="text-5xl sm:text-6xl">{current.targetEmoji}</span>
+          <div className="flex items-center gap-2 sm:gap-3 bg-pink-50 dark:bg-pink-950/40 border-2 sm:border-3 border-pink-300 dark:border-pink-800 p-2.5 sm:px-6 sm:py-4 rounded-2xl sm:rounded-3xl shadow-sm">
+            <span className="text-4xl sm:text-6xl">{current.targetEmoji}</span>
             <div className="text-left">
-              <div className="text-2xl sm:text-3xl font-black text-pink-900 dark:text-pink-200 tracking-wide">
+              <div className="text-lg sm:text-3xl font-black text-pink-900 dark:text-pink-200 tracking-wide">
                 {formatCase(current.targetWord, letterCase)}
               </div>
-              <div className="text-xs font-bold text-pink-600 dark:text-pink-400">
+              <div className="text-2xs sm:text-xs font-bold text-pink-600 dark:text-pink-400">
                 Termina com <span className="underline decoration-wavy">-{formatCase(current.rhymeEnding, letterCase)}</span>
               </div>
             </div>
             <button
               type="button"
               onClick={handleHearTarget}
-              className="p-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white shadow-xs cursor-pointer active:scale-95 transition-transform ml-2"
+              className="p-1.5 sm:p-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white shadow-xs cursor-pointer active:scale-95 transition-transform ml-1 sm:ml-2"
               title="Ouvir palavra alvo"
             >
-              <Volume2 className="w-5 h-5" />
+              <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
 
         {/* Options */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 mt-6">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-3 sm:mt-6">
           {current.options.map((opt, idx) => {
             const isSelected = selectedIndex === idx;
             const showSuccess = isAnswered && opt.isCorrect;
@@ -171,7 +171,7 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
 
             let cardStyle = 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-pink-300 dark:hover:border-pink-500 hover:bg-pink-50/40 dark:hover:bg-slate-700/60';
             if (showSuccess) {
-              cardStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-3 ring-emerald-300 dark:ring-emerald-700';
+              cardStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-2 sm:ring-3 ring-emerald-300 dark:ring-emerald-700';
             } else if (showFail) {
               cardStyle = 'bg-rose-50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 opacity-70';
             }
@@ -190,28 +190,28 @@ export const RhymeGame: React.FC<RhymeGameProps> = ({
                   }
                 }}
                 onClick={() => handleSelectOption(idx)}
-                className={`p-4 rounded-2xl border-3 ${cardStyle} flex flex-col items-center justify-center gap-2 cursor-pointer transition-all shadow-sm select-none relative group outline-none focus-visible:ring-4 focus-visible:ring-pink-400`}
+                className={`p-2 sm:p-4 rounded-xl sm:rounded-2xl border-2 sm:border-3 ${cardStyle} flex flex-col items-center justify-center gap-1 sm:gap-2 cursor-pointer transition-all shadow-sm select-none relative group outline-none focus-visible:ring-4 focus-visible:ring-pink-400`}
               >
-                <div className="text-5xl sm:text-6xl my-1 group-hover:scale-110 transition-transform">
+                <div className="text-3xl sm:text-6xl my-0.5 sm:my-1 group-hover:scale-110 transition-transform">
                   {opt.emoji}
                 </div>
 
-                <div className="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-slate-100">
+                <div className="text-xs sm:text-xl font-extrabold text-slate-800 dark:text-slate-100 truncate w-full text-center">
                   {formatCase(opt.word, letterCase)}
                 </div>
 
                 <button
                   type="button"
                   onClick={(e) => handleHearOption(opt.word, e)}
-                  className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 shadow-xs border border-slate-200 dark:border-slate-600 mt-1 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                  className="p-1 sm:p-1.5 rounded-lg bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 shadow-xs border border-slate-200 dark:border-slate-600 mt-0.5 sm:mt-1 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
                   title={`Ouvir ${opt.word}`}
                 >
-                  <Volume2 className="w-4 h-4" />
+                  <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
 
                 {showSuccess && (
-                  <div className="absolute -top-2 -right-2 bg-emerald-500 text-white rounded-full p-1 shadow-md">
-                    <CheckCircle2 className="w-5 h-5" />
+                  <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 bg-emerald-500 text-white rounded-full p-0.5 sm:p-1 shadow-md">
+                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                 )}
               </motion.div>

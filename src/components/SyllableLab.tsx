@@ -189,31 +189,31 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
         </div>
 
         {/* Big Fusion Display */}
-        <div className="flex flex-col items-center justify-center gap-4 my-4">
-          <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
+        <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 my-2 sm:my-4">
+          <div className="flex items-center justify-center gap-1.5 sm:gap-4 flex-wrap">
             {/* Consonant pill */}
             <motion.div
               key={consonant}
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
-              className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-blue-500 text-white font-black text-4xl sm:text-5xl flex items-center justify-center shadow-md border-b-4 border-blue-700"
+              className="w-13 h-16 sm:w-20 sm:h-24 rounded-xl sm:rounded-2xl bg-blue-500 text-white font-black text-3xl sm:text-5xl flex items-center justify-center shadow-md border-b-3 sm:border-b-4 border-blue-700"
             >
               {formatCase(consonant, letterCase)}
             </motion.div>
 
-            <span className="text-2xl sm:text-3xl font-bold text-slate-400">+</span>
+            <span className="text-xl sm:text-3xl font-bold text-slate-400">+</span>
 
             {/* Vowel pill */}
             <motion.div
               key={vowel}
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
-              className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-amber-500 text-white font-black text-4xl sm:text-5xl flex items-center justify-center shadow-md border-b-4 border-amber-700"
+              className="w-13 h-16 sm:w-20 sm:h-24 rounded-xl sm:rounded-2xl bg-amber-500 text-white font-black text-3xl sm:text-5xl flex items-center justify-center shadow-md border-b-3 sm:border-b-4 border-amber-700"
             >
               {formatCase(vowel, letterCase)}
             </motion.div>
 
-            <span className="text-2xl sm:text-3xl font-bold text-slate-400">=</span>
+            <span className="text-xl sm:text-3xl font-bold text-slate-400">=</span>
 
             {/* Combined Syllable result */}
             <motion.button
@@ -223,11 +223,11 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
               whileTap={{ scale: 0.95 }}
               type="button"
               onClick={handleSpeakSyllable}
-              className="min-w-[84px] sm:min-w-[110px] h-20 sm:h-24 px-4 rounded-3xl bg-purple-600 hover:bg-purple-700 text-white font-black text-4xl sm:text-5xl flex items-center justify-center gap-2 shadow-lg shadow-purple-200 border-b-4 border-purple-900 cursor-pointer transition-transform"
+              className="min-w-[76px] sm:min-w-[110px] h-16 sm:h-24 px-3 sm:px-4 rounded-2xl sm:rounded-3xl bg-purple-600 hover:bg-purple-700 text-white font-black text-3xl sm:text-5xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-purple-200 border-b-3 sm:border-b-4 border-purple-900 cursor-pointer transition-transform"
               title="Clique para ouvir"
             >
               <span>{formatCase(currentSyllable, letterCase)}</span>
-              <Volume2 className="w-5 h-5 opacity-80" />
+              <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 opacity-80" />
             </motion.button>
           </div>
 
@@ -236,9 +236,9 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-purple-50 border border-purple-200 text-purple-900 text-sm font-bold mt-2"
+              className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl bg-purple-50 border border-purple-200 text-purple-900 text-xs sm:text-sm font-bold mt-1 sm:mt-2"
             >
-              <span className="text-2xl">{example.emoji}</span>
+              <span className="text-xl sm:text-2xl">{example.emoji}</span>
               <span>Como em: {formatCase(example.word, letterCase)}</span>
               <button
                 type="button"
@@ -255,7 +255,7 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
           <button
             type="button"
             onClick={handleAddSyllableToChain}
-            className="mt-2 px-5 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm flex items-center gap-2 shadow-sm border-b-3 border-emerald-700 active:border-b-0 active:translate-y-0.5 transition-all cursor-pointer"
+            className="mt-1 sm:mt-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 shadow-sm border-b-3 border-emerald-700 active:border-b-0 active:translate-y-0.5 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Guardar &quot;{formatCase(currentSyllable, letterCase)}&quot; para formar palavra</span>
@@ -263,19 +263,19 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
         </div>
 
         {/* Consonant Selector Grid */}
-        <div className="mt-6">
-          <div className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-2">
+        <div className="mt-4 sm:mt-6">
+          <div className="text-2xs sm:text-xs font-bold text-blue-800 uppercase tracking-wider mb-2">
             1. Escolha a Consoante:
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
             {CONSONANTS.map(c => (
               <button
                 key={c}
                 type="button"
                 onClick={() => handleSelectConsonant(c)}
-                className={`w-11 h-12 sm:w-12 sm:h-13 rounded-xl font-black text-xl flex items-center justify-center transition-all cursor-pointer ${
+                className={`w-9 h-10 sm:w-12 sm:h-13 rounded-lg sm:rounded-xl font-black text-base sm:text-xl flex items-center justify-center transition-all cursor-pointer ${
                   consonant === c
-                    ? 'bg-blue-600 text-white shadow-md scale-105 border-b-3 border-blue-900'
+                    ? 'bg-blue-600 text-white shadow-md scale-105 border-b-2 sm:border-b-3 border-blue-900'
                     : 'bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200'
                 }`}
               >

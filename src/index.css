@@ -7,7 +7,31 @@
     font-family: 'Lexend', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
   }
+
+  /* Prevent 300ms delay and unintended double-tap zoom on game touch controls */
+  button, 
+  [role="button"], 
+  input, 
+  select, 
+  a {
+    touch-action: manipulation;
+  }
+}
+
+/* Hide scrollbar for clean horizontal tab scroll while keeping touch swipe fluid */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fluid momentum scrolling on iOS */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
 }
 
 .font-reader {

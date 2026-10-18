@@ -92,41 +92,41 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className={`w-full sticky top-0 z-40 px-3 sm:px-6 py-2.5 backdrop-blur-md transition-colors shadow-2xs ${
+      className={`w-full sticky top-0 z-40 px-2.5 sm:px-6 py-2 sm:py-2.5 backdrop-blur-md transition-colors shadow-2xs ${
         darkMode
           ? 'bg-[#0f172a]/95 border-b border-slate-800 text-slate-100'
           : 'bg-white/95 border-b border-amber-200/80 text-slate-800'
       }`}
     >
-      <div className="max-w-5xl mx-auto flex flex-col gap-2.5">
+      <div className="max-w-5xl mx-auto flex flex-col gap-2 sm:gap-2.5">
         {/* Top bar: Brand + Stats + Quick actions */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2">
           {/* Logo / Title */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
             <div
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shadow-xs border transition-transform ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-xs border transition-transform ${
                 darkMode
                   ? 'bg-gradient-to-br from-indigo-600 to-purple-600 border-indigo-400/40 text-white'
                   : 'bg-gradient-to-br from-amber-400 to-orange-400 border-amber-300 text-amber-950'
               }`}
             >
-              <BookOpen className="w-5 h-5" />
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <h1
-                  className={`text-base sm:text-lg font-black leading-tight ${
+                  className={`text-xs sm:text-base md:text-lg font-black leading-tight truncate ${
                     darkMode ? 'text-slate-100' : 'text-slate-800'
                   }`}
                 >
                   Alfabetização Divertida
                 </h1>
-                <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400">
+                <span className="hidden md:inline-block px-1.5 py-0.2 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400">
                   Leitura Ativa
                 </span>
               </div>
               <div
-                className={`text-[11px] font-semibold leading-none mt-0.5 ${
+                className={`text-[10px] sm:text-[11px] font-semibold leading-none mt-0.5 truncate hidden sm:block ${
                   darkMode ? 'text-indigo-300' : 'text-amber-700'
                 }`}
               >
@@ -136,14 +136,14 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Gamification stats & quick toggles */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Stars counter */}
             <motion.div
               key={progress.stars}
               initial={{ scale: 1 }}
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 0.25 }}
-              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl font-black text-xs sm:text-sm border shadow-2xs ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm border shadow-2xs ${
                 darkMode
                   ? 'bg-[#1e293b] border-slate-700 text-amber-300'
                   : 'bg-amber-50 border-amber-200 text-amber-800'
@@ -161,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onOpenRoutine();
               }}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-2xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-indigo-300 border-slate-700'
                   : 'bg-white hover:bg-amber-50 text-amber-900 border-amber-200'
@@ -169,7 +169,7 @@ export const Header: React.FC<HeaderProps> = ({
               title="Ver Cronograma de Rotina Semanal de Estudos"
             >
               <Calendar className="w-3.5 h-3.5 text-amber-500" />
-              <span className="hidden sm:inline">Rotina</span>
+              <span className="hidden md:inline">Rotina</span>
             </button>
 
             {/* Quick Letter Case switch (BASTÃO vs minúsculas) */}
@@ -179,7 +179,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onToggleCase();
               }}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-2xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-slate-200 border-slate-700'
                   : 'bg-white hover:bg-amber-50 text-slate-700 border-slate-200'
@@ -197,7 +197,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onToggleDarkMode();
               }}
-              className={`p-2 rounded-2xl border transition-colors cursor-pointer ${
+              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border transition-colors cursor-pointer ${
                 darkMode
                   ? 'bg-[#1e293b] text-indigo-300 border-slate-700 hover:bg-slate-700'
                   : 'bg-white text-slate-600 border-slate-200 hover:bg-amber-50'
@@ -205,9 +205,9 @@ export const Header: React.FC<HeaderProps> = ({
               title={darkMode ? 'Desativar Modo Escuro' : 'Ativar Modo Escuro'}
             >
               {darkMode ? (
-                <Moon className="w-4 h-4 fill-indigo-400 text-indigo-400" />
+                <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-indigo-400 text-indigo-400" />
               ) : (
-                <Sun className="w-4 h-4 text-amber-600" />
+                <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" />
               )}
             </button>
 
@@ -218,14 +218,14 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onOpenBadges();
               }}
-              className={`p-2 rounded-2xl border cursor-pointer transition-colors ${
+              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border cursor-pointer transition-colors ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-amber-300 border-slate-700'
                   : 'bg-white hover:bg-amber-50 text-amber-700 border-amber-200'
               }`}
               title="Medalhas e Relatório dos Pais"
             >
-              <Award className="w-4 h-4" />
+              <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
 
             {/* Settings Button */}
@@ -235,20 +235,20 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onOpenSettings();
               }}
-              className={`p-2 rounded-2xl border cursor-pointer transition-colors ${
+              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border cursor-pointer transition-colors ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-slate-300 border-slate-700'
                   : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
               }`}
               title="Ajustes de Voz e Acessibilidade"
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
 
-        {/* Navigation Tabs (Playful Pill selector) */}
-        <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-1 scrollbar-none">
+        {/* Navigation Tabs (Playful Pill selector with smooth horizontal touch scroll) */}
+        <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-1 scrollbar-none touch-pan-x -mx-2.5 px-2.5 sm:mx-0 sm:px-0">
           {modes.map(mode => {
             const isActive = currentMode === mode.id;
             return (
@@ -259,7 +259,7 @@ export const Header: React.FC<HeaderProps> = ({
                   soundEngine.playPop();
                   onSelectMode(mode.id);
                 }}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer select-none ${
+                className={`px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer select-none shrink-0 ${
                   isActive
                     ? darkMode
                       ? 'bg-indigo-600 text-white shadow-xs font-black'
@@ -279,3 +279,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+
