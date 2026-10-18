@@ -157,7 +157,7 @@ export default function App() {
   // Game Mode: Defaults to the guided pedagogical trail!
   const [currentMode, setCurrentMode] = useState<GameMode>('trail');
 
-  // Duolingo-style Child Profiles state
+  // Child Profiles state
   const [initialData] = useState(loadInitialProfilesData);
   const [profiles, setProfiles] = useState<UserProfile[]>(initialData.profiles);
   const [activeProfileId, setActiveProfileId] = useState<string>(initialData.activeId);
@@ -253,7 +253,7 @@ export default function App() {
     }
   }, [settings]);
 
-  // Duolingo streak daily check and incrementer
+  // Daily streak check and incrementer
   const bumpDailyStreak = () => {
     const today = getTodayDateKey();
     setProfiles(prev => {
@@ -1121,7 +1121,7 @@ export default function App() {
         darkMode={settings.darkMode}
       />
 
-      {/* Duolingo-style Child Profiles Modal */}
+      {/* Child Profiles Modal */}
       <ProfileModal
         isOpen={isProfilesOpen}
         onClose={() => setIsProfilesOpen(false)}

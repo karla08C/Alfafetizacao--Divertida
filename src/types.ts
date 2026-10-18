@@ -161,7 +161,7 @@ export interface UserProfile {
   avatarBg: string; // Tailwind gradient CSS class
   levelTitle: string; // e.g. "Explorador da Leitura", "Detetive de Sílabas"
   ageGroup?: string; // e.g. "4-5 anos", "6-7 anos", "8+ anos"
-  streakDays: number; // Duolingo-style streak flame 🔥
+  streakDays: number; // Daily study streak flame 🔥
   lastActiveDate: string; // YYYY-MM-DD
   createdAt: string;
   progress: UserProgress;

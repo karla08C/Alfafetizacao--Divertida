@@ -142,7 +142,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Gamification stats & quick toggles */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 overflow-x-auto scrollbar-none py-0.5 pl-1 max-w-[65vw] sm:max-w-none justify-end">
-            {/* Duolingo Profile & Streak Flame Chip */}
+            {/* Profile & Streak Flame Chip */}
             {activeProfile && (
               <button
                 type="button"

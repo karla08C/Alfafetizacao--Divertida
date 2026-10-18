@@ -88,7 +88,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
   const activeProfile = profiles.find(p => p.id === activeProfileId) || profiles[0];
 
-  // Ranked profiles for Duolingo leaderboard
+  // Ranked profiles for leaderboard
   const rankedProfiles = [...profiles].sort((a, b) => b.progress.stars - a.progress.stars);
 
   const startCreate = () => {
@@ -160,7 +160,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
     }
   };
 
-  // Days of week for Duolingo Streak visualization
+  // Days of week for Streak visualization
   const weekDays = [
     { day: 'D', name: 'Dom' },
     { day: 'S', name: 'Seg' },
@@ -199,9 +199,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             <div>
               <h2 className="text-base sm:text-lg font-black leading-tight text-white flex items-center gap-1.5">
                 <span>Perfis de Aprendizes</span>
-                <span className="text-2xs uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full font-bold">
-                  Estilo Duolingo
-                </span>
               </h2>
               <p className="text-xs text-white/80 leading-tight">
                 {view === 'list' && 'Quem vai aprender e se divertir agora?'}
@@ -228,7 +225,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
         <div className="p-4 sm:p-6 overflow-y-auto space-y-5">
           {view === 'list' ? (
             <>
-              {/* Active Profile Duolingo Hero Card */}
+              {/* Active Profile Hero Card */}
               {activeProfile && (
                 <div
                   className={`p-4 sm:p-5 rounded-2xl border-2 relative overflow-hidden shadow-sm ${
@@ -262,7 +259,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                         {activeProfile.levelTitle} {activeProfile.ageGroup ? `• ${activeProfile.ageGroup}` : ''}
                       </p>
 
-                      {/* Duolingo Streak & Stars summary */}
+                      {/* Streak & Stars summary */}
                       <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 mt-2.5">
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-500/15 border border-orange-500/30 text-orange-600 dark:text-orange-400 font-black text-xs">
                           <Flame className="w-4 h-4 fill-orange-500 text-orange-500 animate-pulse" />
@@ -277,7 +274,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     </div>
                   </div>
 
-                  {/* Duolingo Week Flame Tracker */}
+                  {/* Week Flame Tracker */}
                   <div className="mt-4 pt-3.5 border-t border-amber-200/60 dark:border-slate-700/60">
                     <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 text-2xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                       <span className="flex items-center gap-1">
