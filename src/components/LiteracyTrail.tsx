@@ -224,7 +224,7 @@ export const LiteracyTrail: React.FC<LiteracyTrailProps> = ({
                   soundEngine.playPop();
                   onOpenRoutine();
                 }}
-                className={`px-3 py-2 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
+                className={`flex-1 sm:flex-none justify-center px-3 py-2 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
                   darkMode
                     ? 'bg-[#111827] border-slate-700 text-slate-300 hover:bg-slate-800'
                     : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
@@ -242,7 +242,7 @@ export const LiteracyTrail: React.FC<LiteracyTrailProps> = ({
                   onSelectMode(todayRoutine.recommendedMode);
                 }
               }}
-              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+              className="flex-1 sm:flex-none justify-center px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Praticar Agora</span>

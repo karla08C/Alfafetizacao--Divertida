@@ -148,16 +148,16 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col gap-6">
       {/* Story Selector tabs */}
-      <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1">
+      <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-1 scrollbar-none px-1">
         {stories.map((s, idx) => (
           <button
             key={s.id}
             type="button"
             onClick={() => handleSelectStory(idx)}
-            className={`px-3.5 py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               currentStoryIndex === idx
                 ? 'bg-amber-500 text-white shadow-md border-b-3 border-amber-700'
-                : 'bg-white dark:bg-slate-850 text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                : 'bg-white dark:bg-[#182234] text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700'
             }`}
           >
             <span>{s.coverEmoji}</span>
@@ -173,10 +173,10 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
           <div className="text-5xl sm:text-8xl my-1 sm:my-2 select-none animate-bounce">
             {story.illustration}
           </div>
-          <h3 className="text-lg sm:text-2xl font-black text-amber-900 dark:text-amber-300 tracking-wide mt-1 sm:mt-2">
+          <h3 className="text-lg sm:text-2xl font-black text-amber-900 dark:text-amber-300 tracking-wide mt-1 sm:mt-2 text-center">
             {formatCase(story.title, letterCase)}
           </h3>
-          <p className="text-2xs sm:text-xs text-slate-400 dark:text-slate-500 mt-0.5 sm:mt-1">
+          <p className="text-2xs sm:text-xs text-slate-400 dark:text-slate-500 mt-0.5 sm:mt-1 text-center">
             Toque em qualquer palavra para ver e ouvir as sílabas
           </p>
         </div>
@@ -195,7 +195,7 @@ export const ReadAlongBook: React.FC<ReadAlongBookProps> = ({
                   className={`px-2.5 sm:px-4 py-1.5 sm:py-3 rounded-xl sm:rounded-2xl font-black text-xl sm:text-3xl transition-all cursor-pointer select-none ${
                     isActive
                       ? 'bg-amber-400 text-amber-950 scale-105 sm:scale-110 shadow-md ring-3 sm:ring-4 ring-amber-300'
-                      : 'bg-white dark:bg-slate-850 hover:bg-amber-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-200 dark:border-slate-700 hover:border-amber-300 shadow-xs'
+                      : 'bg-white dark:bg-[#182234] hover:bg-amber-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-200 dark:border-slate-700 hover:border-amber-300 shadow-xs'
                   }`}
                 >
                   {formatCase(w.text, letterCase)}

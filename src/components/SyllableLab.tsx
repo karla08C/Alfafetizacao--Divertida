@@ -255,10 +255,11 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
           <button
             type="button"
             onClick={handleAddSyllableToChain}
-            className="mt-1 sm:mt-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 shadow-sm border-b-3 border-emerald-700 active:border-b-0 active:translate-y-0.5 transition-all cursor-pointer"
+            className="mt-1 sm:mt-2 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 shadow-sm border-b-3 border-emerald-700 active:border-b-0 active:translate-y-0.5 transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
-            <span>Guardar &quot;{formatCase(currentSyllable, letterCase)}&quot; para formar palavra</span>
+            <Plus className="w-4 h-4 shrink-0" />
+            <span className="hidden xs:inline">Guardar &quot;{formatCase(currentSyllable, letterCase)}&quot; para formar palavra</span>
+            <span className="xs:hidden">Guardar &quot;{formatCase(currentSyllable, letterCase)}&quot;</span>
           </button>
         </div>
 
@@ -267,13 +268,13 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
           <div className="text-2xs sm:text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider mb-2">
             1. Escolha a Consoante:
           </div>
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
+          <div className="flex flex-wrap gap-1 xs:gap-1.5 sm:gap-2 justify-center">
             {CONSONANTS.map(c => (
               <button
                 key={c}
                 type="button"
                 onClick={() => handleSelectConsonant(c)}
-                className={`w-9 h-10 sm:w-12 sm:h-13 rounded-lg sm:rounded-xl font-black text-base sm:text-xl flex items-center justify-center transition-all cursor-pointer ${
+                className={`w-8 h-9 xs:w-9 xs:h-10 sm:w-12 sm:h-13 rounded-lg sm:rounded-xl font-black text-sm xs:text-base sm:text-xl flex items-center justify-center transition-all cursor-pointer select-none ${
                   consonant === c
                     ? 'bg-blue-600 text-white shadow-md scale-105 border-b-2 sm:border-b-3 border-blue-900'
                     : 'bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 text-blue-900 dark:text-blue-300 border border-blue-200 dark:border-slate-700'
@@ -290,13 +291,13 @@ export const SyllableLab: React.FC<SyllableLabProps> = ({
           <div className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-2">
             2. Escolha a Vogal:
           </div>
-          <div className="flex flex-wrap gap-2.5 justify-center">
+          <div className="flex flex-wrap gap-1.5 xs:gap-2.5 justify-center">
             {VOWELS.map(v => (
               <button
                 key={v}
                 type="button"
                 onClick={() => handleSelectVowel(v)}
-                className={`w-12 h-13 sm:w-14 sm:h-14 rounded-2xl font-black text-2xl flex items-center justify-center transition-all cursor-pointer ${
+                className={`w-10 h-11 xs:w-12 xs:h-13 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl font-black text-xl sm:text-2xl flex items-center justify-center transition-all cursor-pointer select-none ${
                   vowel === v
                     ? 'bg-amber-500 text-white shadow-md scale-105 border-b-3 border-amber-800'
                     : 'bg-amber-50 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-slate-700'

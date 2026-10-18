@@ -263,7 +263,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                       </p>
 
                       {/* Duolingo Streak & Stars summary */}
-                      <div className="flex items-center justify-center sm:justify-start gap-3 mt-2.5">
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 mt-2.5">
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-500/15 border border-orange-500/30 text-orange-600 dark:text-orange-400 font-black text-xs">
                           <Flame className="w-4 h-4 fill-orange-500 text-orange-500 animate-pulse" />
                           <span>{activeProfile.streakDays || 1} dias de ofensiva!</span>
@@ -279,12 +279,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
                   {/* Duolingo Week Flame Tracker */}
                   <div className="mt-4 pt-3.5 border-t border-amber-200/60 dark:border-slate-700/60">
-                    <div className="flex items-center justify-between text-2xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                    <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 text-2xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                       <span className="flex items-center gap-1">
                         <Flame className="w-3.5 h-3.5 text-orange-500" />
                         <span>Ofensiva da Semana</span>
                       </span>
-                      <span className="text-orange-500 font-black">
+                      <span className="text-orange-500 font-black truncate">
                         Estude hoje para manter o fogo aceso! 🔥
                       </span>
                     </div>

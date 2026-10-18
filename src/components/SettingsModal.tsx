@@ -55,7 +55,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         initial={{ scale: 0.92, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.92, opacity: 0 }}
-        className={`rounded-3xl border-2 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative max-h-[90vh] flex flex-col transition-colors ${
+        className={`rounded-3xl border-2 shadow-2xl max-w-lg w-full p-4 sm:p-7 relative max-h-[90vh] flex flex-col transition-colors ${
           isDark
             ? 'bg-[#111827] border-indigo-500/60 text-slate-100 shadow-indigo-950/50'
             : 'bg-white border-amber-300 text-slate-800'
@@ -63,23 +63,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       >
         {/* Header */}
         <div
-          className={`flex items-center justify-between pb-4 border-b ${
+          className={`flex items-center justify-between pb-3.5 border-b ${
             isDark ? 'border-slate-800' : 'border-slate-100'
           }`}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
             <div
-              className={`p-2.5 rounded-2xl ${
+              className={`p-2.5 rounded-2xl shrink-0 ${
                 isDark ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-amber-100 text-amber-800'
               }`}
             >
               <Settings className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className={`text-lg font-black ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+            <div className="min-w-0">
+              <h3 className={`text-base sm:text-lg font-black leading-tight truncate ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
                 Ajustes e Acessibilidade
               </h3>
-              <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              <p className={`text-2xs sm:text-xs mt-0.5 truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                 Personalize áudio, modo noturno e tipografia
               </p>
             </div>

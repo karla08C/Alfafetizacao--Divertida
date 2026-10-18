@@ -141,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Gamification stats & quick toggles */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 overflow-x-auto scrollbar-none py-0.5 pl-1 max-w-[65vw] sm:max-w-none justify-end">
             {/* Duolingo Profile & Streak Flame Chip */}
             {activeProfile && (
               <button
@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
                   soundEngine.playPop();
                   onOpenProfiles();
                 }}
-                className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-2xs hover:scale-102 active:scale-98 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-2xs hover:scale-102 active:scale-98 shrink-0 ${
                   darkMode
                     ? 'bg-[#182234] hover:bg-slate-800 border-amber-500/40 text-slate-100'
                     : 'bg-gradient-to-r from-amber-50 to-orange-50 hover:bg-amber-100 border-amber-300 text-slate-800'
@@ -162,7 +162,7 @@ export const Header: React.FC<HeaderProps> = ({
                 >
                   {activeProfile.avatar}
                 </div>
-                <span className="text-xs font-black truncate max-w-[65px] sm:max-w-[100px] hidden xs:inline">
+                <span className="text-xs font-black truncate max-w-[55px] sm:max-w-[100px] hidden xs:inline">
                   {activeProfile.name}
                 </span>
                 <div className="flex items-center gap-0.5 text-xs font-black text-orange-500">
@@ -178,7 +178,7 @@ export const Header: React.FC<HeaderProps> = ({
               initial={{ scale: 1 }}
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 0.25 }}
-              className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm border shadow-2xs ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm border shadow-2xs shrink-0 ${
                 darkMode
                   ? 'bg-[#1e293b] border-slate-700 text-amber-300'
                   : 'bg-amber-50 border-amber-200 text-amber-800'
@@ -196,7 +196,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onOpenRoutine();
               }}
-              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer shrink-0 ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-indigo-300 border-slate-700'
                   : 'bg-white hover:bg-amber-50 text-amber-900 border-amber-200'
@@ -214,7 +214,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onToggleCase();
               }}
-              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer shrink-0 ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-slate-200 border-slate-700'
                   : 'bg-white hover:bg-amber-50 text-slate-700 border-slate-200'
@@ -222,7 +222,8 @@ export const Header: React.FC<HeaderProps> = ({
               title="Alternar entre Letra BASTÃO (MAIÚSCULA) e minúscula"
             >
               <Type className={`w-3.5 h-3.5 ${darkMode ? 'text-indigo-400' : 'text-amber-600'}`} />
-              <span>{letterCase === 'uppercase' ? 'BASTÃO' : 'abc'}</span>
+              <span className="hidden sm:inline">{letterCase === 'uppercase' ? 'BASTÃO' : 'abc'}</span>
+              <span className="sm:hidden">{letterCase === 'uppercase' ? 'A' : 'a'}</span>
             </button>
 
             {/* Quick Dark Mode Toggle Button */}
@@ -232,7 +233,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onToggleDarkMode();
               }}
-              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border transition-colors cursor-pointer ${
+              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border transition-colors cursor-pointer shrink-0 ${
                 darkMode
                   ? 'bg-[#1e293b] text-indigo-300 border-slate-700 hover:bg-slate-700'
                   : 'bg-white text-slate-600 border-slate-200 hover:bg-amber-50'
@@ -253,7 +254,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onOpenBadges();
               }}
-              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border cursor-pointer transition-colors ${
+              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border cursor-pointer transition-colors shrink-0 ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-amber-300 border-slate-700'
                   : 'bg-white hover:bg-amber-50 text-amber-700 border-amber-200'
@@ -270,7 +271,7 @@ export const Header: React.FC<HeaderProps> = ({
                 soundEngine.playPop();
                 onOpenSettings();
               }}
-              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border cursor-pointer transition-colors ${
+              className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border cursor-pointer transition-colors shrink-0 ${
                 darkMode
                   ? 'bg-[#1e293b] hover:bg-slate-700 text-slate-300 border-slate-700'
                   : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'

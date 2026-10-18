@@ -85,17 +85,17 @@ export const StudyScheduleModal: React.FC<StudyScheduleModalProps> = ({
             >
               <Calendar className="w-5 h-5 text-amber-500" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className={`text-lg font-black ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-                  Cronograma de Rotina de Estudos
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <h3 className={`text-sm sm:text-lg font-black leading-tight ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                  Cronograma de Rotina
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-2xs font-extrabold bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                <span className="px-2 py-0.2 rounded-full text-2xs font-extrabold bg-amber-500/20 text-amber-600 dark:text-amber-400">
                   15 min/dia
                 </span>
               </div>
-              <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                Passo a passo pedagógico diário recomendado para a alfabetização
+              <p className={`text-2xs sm:text-xs mt-0.5 truncate ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                Passo a passo pedagógico diário recomendado
               </p>
             </div>
           </div>
